@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experimach - Explora y Descubre Tu Próximo Destino</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              300: '#5eead4',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              900: '#134e4a',
+            },
+            accent: {
+              500: '#6366f1',
+              600: '#4f46e5',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #2dd4bf 0%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .pulse-glow { box-shadow: 0 0 20px rgba(45, 212, 191, 0.35); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="h-full font-sans antialiased bg-slate-950 text-slate-100 flex flex-col min-h-screen">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 glass-nav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('recommender')">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-500 to-accent-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+            <i class="fa-solid fa-compass text-slate-950 text-xl"></i>
+          </div>
+          <div>
+            <span class="text-2xl font-extrabold tracking-tight text-white">Experi<span class="gradient-text">mach</span></span>
+            <p class="text-[10px] text-brand-400 font-semibold tracking-wider uppercase">Portal de Descubrimiento de Lugares</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs (Modo Cliente) -->
+        <nav class="hidden md:flex items-center space-x-1 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+          <button id="nav-recommender" onclick="switchTab('recommender')" class="nav-btn active text-xs font-semibold px-3.5 py-2 rounded-xl transition-all duration-200 text-white bg-brand-600 shadow-sm flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-brand-300"></i> Recomendaciones
+          </button>
+          <button id="nav-radar" onclick="switchTab('radar')" class="nav-btn text-xs font-semibold px-3.5 py-2 rounded-xl transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-location-crosshairs text-slate-400"></i> Radar de Cercanía
+          </button>
+          <button id="nav-catalog" onclick="switchTab('catalog')" class="nav-btn text-xs font-semibold px-3.5 py-2 rounded-xl transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-slate-400"></i> Explora Destinos
+          </button>
+          <button id="nav-ai" onclick="switchTab('ai')" class="nav-btn text-xs font-semibold px-3.5 py-2 rounded-xl transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-robot text-slate-400"></i> ExperiBot AI
+          </button>
+        </nav>
+
+        <!-- Acciones del Usuario (Favoritos y Autenticación) -->
+        <div class="flex items-center gap-3">
+          <button onclick="toggleFavoritesModal()" class="relative p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-brand-500/50 transition">
+            <i class="fa-solid fa-heart text-rose-500"></i>
+            <span id="fav-count" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-950">0</span>
+          </button>
+          
+          <!-- Botón de Iniciar Sesión / Registro -->
+          <div id="auth-button-container">
+            <button onclick="openAuthModal()" class="flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-lg shadow-brand-500/20">
+              <i class="fa-solid fa-user-plus"></i> Iniciar Sesión / Registrarse
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- HERO BANNER -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900/90 to-brand-950/40 border border-slate-800 p-6 sm:p-8 mb-8 shadow-2xl">
+      <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative z-10 max-w-3xl">
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-500/10 border border-brand-500/30 text-brand-300 mb-3">
+          <span class="w-2 h-2 rounded-full bg-brand-400 animate-ping"></span> Experiencias personalizadas en tiempo real
+        </span>
+        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-3 leading-tight">
+          Encuentra tu próximo lugar ideal con <span class="gradient-text">ExperiMatch</span>
+        </h1>
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+          Selecciona tus gustos, filtra por ubicación o rango de edad y descubre los rincones mejor valorados según tu estilo.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECCIÓN RECOMENDADOR & FILTROS -->
+    <section id="tab-recommender" class="tab-content space-y-8">
+      
+      <!-- Panel de Controles y Filtros -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-xl">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-sliders"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-white">Configura tus Preferencias</h2>
+              <p class="text-xs text-slate-400">Ajusta los parámetros para obtener mejores sugerencias</p>
+            </div>
+          </div>
+          <button onclick="resetPreferences()" class="text-xs text-slate-400 hover:text-brand-400 transition flex items-center gap-1">
+            <i class="fa-solid fa-rotate-right"></i> Reiniciar Filtros
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          
+          <!-- Filtro 1: Ciudad -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              <i class="fa-solid fa-city text-brand-400 mr-1"></i> Ciudad
+            </label>
+            <select id="user-city" onchange="runMatchingEngine()" class="w-full bg-slate-900 border border-slate-700 text-slate-100 rounded-xl px-4 py-3 text-xs focus:border-brand-500 focus:outline-none transition">
+              <option value="ALL">Todas las Ciudades</option>
+            </select>
+          </div>
+
+          <!-- Filtro 2: Edad -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              <i class="fa-solid fa-user-check text-purple-400 mr-1"></i> Tu Edad
+            </label>
+            <input type="number" id="user-age" value="20" min="0" max="99" onchange="runMatchingEngine()" onkeyup="runMatchingEngine()" class="w-full bg-slate-900 border border-slate-700 text-slate-100 rounded-xl px-4 py-3 text-xs focus:border-brand-500 focus:outline-none transition">
+          </div>
+
+          <!-- Filtro 3: Distancia -->
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                <i class="fa-solid fa-route text-indigo-400 mr-1"></i> Distancia Máxima
+              </label>
+              <span id="distance-val" class="text-xs font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-md">15 km</span>
+            </div>
+            <input type="range" id="user-distance" min="1" max="50" value="15" step="1" oninput="updateDistanceLabel(this.value); runMatchingEngine()" class="w-full accent-brand-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+          </div>
+
+          <!-- Filtro 4: Presupuesto -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              <i class="fa-solid fa-wallet text-emerald-400 mr-1"></i> Presupuesto
+            </label>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button type="button" onclick="setPriceFilter('1')" class="price-btn text-xs font-bold py-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-brand-500 transition" data-price="1">$</button>
+              <button type="button" onclick="setPriceFilter('2')" class="price-btn text-xs font-bold py-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-brand-500 transition active-price border-brand-500 text-brand-300 bg-brand-500/10" data-price="2">$$</button>
+              <button type="button" onclick="setPriceFilter('3')" class="price-btn text-xs font-bold py-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-brand-500 transition" data-price="3">$$$</button>
+              <button type="button" onclick="setPriceFilter('ALL')" class="price-btn text-xs font-bold py-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-brand-500 transition" data-price="ALL">Todos</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Etiquetas de Interés -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">
+            <i class="fa-solid fa-tags text-rose-400 mr-1"></i> Etiquetas de Interés
+          </label>
+          <div id="taste-chips" class="flex flex-wrap gap-2"></div>
+        </div>
+
+      </div>
+
+      <!-- Tarjetas Recomendadas -->
+      <div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-extrabold text-white flex items-center gap-2">
+              <i class="fa-solid fa-bullseye text-brand-400"></i> Lugares Sugeridos
+            </h2>
+            <p id="results-count-text" class="text-xs text-slate-400 mt-1">Calculando mejores opciones...</p>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400 font-medium">Ordenar por:</span>
+            <select id="sort-by" onchange="runMatchingEngine()" class="bg-slate-900 border border-slate-800 text-xs text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-500">
+              <option value="match">Mayor % Match (Afinidad)</option>
+              <option value="distance">Menor Distancia (Cercanía)</option>
+              <option value="rating">Mejor Calificación</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="recommendations-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </div>
+
+    </section>
+
+    <!-- SECCIÓN RADAR -->
+    <section id="tab-radar" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-3xl p-6 sm:p-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+          <div>
+            <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Mapa Interactivo</span>
+            <h2 class="text-2xl font-bold text-white">Radar de Cercanía</h2>
+            <p class="text-xs text-slate-400">Visualiza geográficamente las distancias de cada lugar a tu posición</p>
+          </div>
+          <span class="text-xs text-slate-400">Origen: <strong class="text-brand-300" id="radar-center-label">Medellín (0 km)</strong></span>
+        </div>
+
+        <div class="relative w-full h-[450px] bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-center">
+          <div class="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:16px_16px]"></div>
+          
+          <div class="absolute border border-brand-500/20 rounded-full w-[120px] h-[120px] pointer-events-none"></div>
+          <div class="absolute border border-brand-500/20 rounded-full w-[240px] h-[240px] pointer-events-none"></div>
+          <div class="absolute border border-brand-500/20 rounded-full w-[360px] h-[360px] pointer-events-none"></div>
+
+          <div class="absolute w-full h-full rounded-full animate-spin pointer-events-none opacity-20" style="animation-duration: 10s;">
+            <div class="w-1/2 h-1/2 bg-gradient-to-br from-brand-400/40 to-transparent"></div>
+          </div>
+
+          <div class="absolute z-20 flex flex-col items-center">
+            <div class="w-8 h-8 rounded-full bg-brand-500 text-slate-950 flex items-center justify-center font-bold text-xs ring-4 ring-brand-500/30 pulse-glow">
+              <i class="fa-solid fa-street-view"></i>
+            </div>
+            <span class="text-[10px] bg-slate-950/90 text-brand-300 px-2 py-0.5 rounded-full mt-1 border border-brand-500/40 font-mono">Tu Ubicación</span>
+          </div>
+
+          <div id="radar-points-container" class="absolute inset-0"></div>
+
+          <div class="absolute bottom-4 left-4 bg-slate-950/90 backdrop-filter blur-md border border-slate-800 p-3 rounded-xl text-xs space-y-1">
+            <p class="font-bold text-white mb-1"><i class="fa-solid fa-map-pin text-brand-400"></i> Afinidad</p>
+            <div class="flex items-center gap-2 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span> Alta (>80%)</div>
+            <div class="flex items-center gap-2 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> Media (50%-80%)</div>
+            <div class="flex items-center gap-2 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></span> Baja</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN CATÁLOGO -->
+    <section id="tab-catalog" class="tab-content hidden space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Catálogo de Lugares</h2>
+          <p class="text-xs text-slate-400">Explora todos los destinos disponibles en el sistema</p>
+        </div>
+        
+        <div class="relative w-full sm:w-80">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+          <input type="text" id="catalog-search" oninput="renderCatalog()" placeholder="Buscar por nombre o ciudad..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-brand-500">
+        </div>
+      </div>
+
+      <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- SECCIÓN EXPERIBOT AI -->
+    <section id="tab-ai" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-3xl p-6 sm:p-8 flex flex-col h-[600px]">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-4 mb-4">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-accent-500 to-brand-400 flex items-center justify-center text-slate-950 font-bold text-lg">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-white">ExperiBot - Asistente Personal</h2>
+            <p class="text-xs text-slate-400">Pregúntame qué hacer en tu ciudad según tus gustos</p>
+          </div>
+        </div>
+
+        <div id="ai-chat-history" class="flex-1 overflow-y-auto space-y-4 pr-2 mb-4">
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-xl bg-accent-500/20 text-accent-400 flex items-center justify-center text-xs flex-shrink-0">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl max-w-xl text-xs text-slate-200 leading-relaxed">
+              ¡Hola! Soy <strong>ExperiBot</strong>. Puedo ayudarte a recomendar los mejores lugares según tu edad, presupuesto y aficiones. ¿Qué buscas hoy?
+            </div>
+          </div>
+        </div>
+
+        <form id="ai-form" onsubmit="handleAIChatSubmit(event)" class="flex gap-2">
+          <input type="text" id="ai-input" placeholder="Ej: Recomiéndame un café tranquilo en Medellín con bonita vista" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-100 focus:outline-none focus:border-brand-500">
+          <button type="submit" class="bg-brand-600 hover:bg-brand-500 text-slate-950 font-bold px-5 py-3 rounded-xl transition text-xs flex items-center gap-2">
+            <span>Enviar</span> <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL DE REGISTRO E INICIO DE SESIÓN PARA CLIENTES -->
+  <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-700 relative">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <!-- Selector Iniciar Sesión / Registro -->
+      <div class="flex border-b border-slate-800 pb-3 mb-4 gap-4">
+        <button id="tab-btn-login" onclick="switchAuthTab('login')" class="text-sm font-bold text-brand-400 border-b-2 border-brand-400 pb-1">
+          Iniciar Sesión
+        </button>
+        <button id="tab-btn-register" onclick="switchAuthTab('register')" class="text-sm font-bold text-slate-400 hover:text-white pb-1">
+          Registrarse
+        </button>
+      </div>
+
+      <!-- Formulario Login -->
+      <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Nombre de Usuario o Email</label>
+          <input type="text" required placeholder="ejemplo@correo.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Contraseña</label>
+          <input type="password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <button type="submit" class="w-full bg-brand-600 font-bold text-slate-950 py-2.5 rounded-xl text-xs hover:bg-brand-500 transition">
+          Ingresar
+        </button>
+      </form>
+
+      <!-- Formulario Registro -->
+      <form id="form-register" onsubmit="handleRegister(event)" class="space-y-3 hidden">
+         <div>
+          <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Cedula</label>
+          <input type="text" id="reg-name" required placeholder="012345678910" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Nombre Completo</label>
+          <input type="text" id="reg-name" required placeholder="Camila Restrepo" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Fecha de Nacimiento</label>
+          <input type="date" id="reg-dob" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Género</label>
+          <select id="reg-gender" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+            <option value="1">Femenino</option>
+            <option value="2">Masculino</option>
+            <option value="3">No Binario</option>
+            <option value="4">Prefiero no decir</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Contraseña</label>
+          <input type="password" required placeholder="Crea una contraseña" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <button type="submit" class="w-full bg-brand-600 font-bold text-slate-950 py-2.5 rounded-xl text-xs hover:bg-brand-500 transition">
+          Crear Cuenta
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DETALLE DE LUGAR -->
+  <div id="place-detail-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl border border-slate-700 relative max-h-[90vh] overflow-y-auto">
+      <button onclick="closeDetailModal()" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-slate-950/80 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="h-56 bg-slate-900 relative">
+        <img id="modal-img" src="" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+        <div class="absolute bottom-4 left-6 right-6 flex justify-between items-end">
+          <div>
+            <span id="modal-category" class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 border border-brand-500/40 text-[10px] font-bold uppercase font-mono"></span>
+            <h3 id="modal-title" class="text-2xl font-extrabold text-white mt-1"></h3>
+            <p id="modal-location" class="text-xs text-slate-300 flex items-center gap-1 mt-0.5"><i class="fa-solid fa-location-dot text-rose-400"></i> <span></span></p>
+          </div>
+          <div id="modal-match-badge" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-extrabold text-sm shadow-lg"></div>
+        </div>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div>
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Descripción</h4>
+          <p id="modal-desc" class="text-xs text-slate-200 leading-relaxed"></p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 text-center text-xs">
+          <div>
+            <span class="block text-[10px] text-slate-400 uppercase font-semibold">Cercanía</span>
+            <span id="modal-distance" class="font-bold text-brand-300 text-sm"></span>
+          </div>
+          <div>
+            <span class="block text-[10px] text-slate-400 uppercase font-semibold">Presupuesto</span>
+            <span id="modal-price" class="font-bold text-emerald-400 text-sm"></span>
+          </div>
+          <div>
+            <span class="block text-[10px] text-slate-400 uppercase font-semibold">Edad Mínima</span>
+            <span id="modal-min-age" class="font-bold text-purple-400 text-sm"></span>
+          </div>
+          <div>
+            <span class="block text-[10px] text-slate-400 uppercase font-semibold">Calificación</span>
+            <span id="modal-rating" class="font-bold text-amber-400 text-sm"></span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Etiquetas</h4>
+          <div id="modal-tags" class="flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <!-- Opiniones -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+            <span>Opiniones de la Comunidad</span>
+            <span id="reviews-count" class="text-slate-500 text-[10px]"></span>
+          </h4>
+          <div id="modal-reviews-list" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button id="modal-fav-btn" onclick="" class="flex-1 bg-brand-600 hover:bg-brand-500 text-slate-950 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-heart"></i> Guardar en Favoritos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL LATERAL DE FAVORITOS -->
+  <div id="favorites-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-end">
+    <div class="glass-card w-full max-w-md h-full p-6 shadow-2xl border-l border-slate-800 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-heart text-rose-500"></i> Tus Favoritos
+          </h3>
+          <button onclick="toggleFavoritesModal()" class="text-slate-400 hover:text-white">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div id="fav-list-container" class="space-y-3 overflow-y-auto max-h-[calc(100vh-180px)] pr-1"></div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-800">
+        <button onclick="clearAllFavorites()" class="w-full bg-slate-900 hover:bg-slate-800 text-rose-400 text-xs py-2.5 rounded-xl border border-slate-800 transition">
+          Vaciar Lista
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    /* BASE DE DATOS INICIAL DE MUESTRA */
+    let db_CIUDAD = [
+      { id_ciudad: 1, nombre_ciudad: "Medellín" },
+      { id_ciudad: 2, nombre_ciudad: "Bogotá" },
+      { id_ciudad: 3, nombre_ciudad: "Cartagena" }
+    ];
+
+    let db_ZONA = [
+      { id_zona: 1, nombre_zona: "El Poblado", id_ciudad: 1 },
+      { id_zona: 2, nombre_zona: "Las Palmas", id_ciudad: 1 },
+      { id_zona: 3, nombre_zona: "Ciudad del Río", id_ciudad: 1 }
+    ];
+
+    let db_USUARIO = [
+      { id_usuario: 1, nombre_usuario: "Camila Restrepo", id_genero: 1, fecha_nacimiento: "1998-04-12" }
+    ];
+
+    let db_LUGARES = [
+      {
+        id_lugares: 1,
+        id_ciudad: 1,
+        id_zona: 2,
+        nombre_lugar: "Mirador & Café las Palmas",
+        descripcion: "Espectacular mirador sobre Medellín con opciones de café artesanal y vistas mágicas.",
+        edad_minima: 0,
+        calle: "Vía Las Palmas",
+        carrera: "km 9",
+        numero: 120,
+        distance: 4.2,
+        priceLevel: 1,
+        image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        id_lugares: 2,
+        id_ciudad: 1,
+        id_zona: 1,
+        nombre_lugar: "Mercado del Río",
+        descripcion: "Gran centro gastronómico con múltiples variedades de cocina nacional e internacional.",
+        edad_minima: 18,
+        calle: "Calle 24",
+        carrera: "Carrera 48",
+        numero: 28,
+        distance: 2.8,
+        priceLevel: 2,
+        image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80"
+      }
+    ];
+
+    let db_TIPO_LUGAR = [
+      { id_tipo_lugar: 1, tipo_lugar: "Mirador & Café", id_lugares: 1 },
+      { id_tipo_lugar: 2, tipo_lugar: "Gastronomía", id_lugares: 2 }
+    ];
+
+    let db_ETIQUETA = [
+      { id_etiqueta: 1, nombre_etiqueta: "Vista Panorámica" },
+      { id_etiqueta: 2, nombre_etiqueta: "Café de Origen" },
+      { id_etiqueta: 3, nombre_etiqueta: "Gastronomía" }
+    ];
+
+    let db_LUGAR_ETIQUETA = [
+      { id_lugar_etiqueta: 1, id_lugar: 1, id_etiqueta: 1 },
+      { id_lugar_etiqueta: 2, id_lugar: 1, id_etiqueta: 2 },
+      { id_lugar_etiqueta: 3, id_lugar: 2, id_etiqueta: 3 }
+    ];
+
+    let db_RESENA = [
+      { id_resena: 1, fecha: "2024-05-11", calificacion: 5, comentario: "¡Increíble vista y excelente ambiente!", id_lugares: 1, id_usuario: 1 }
+    ];
+
+    /* ESTADO DEL CLIENTE */
+    let currentUser = null; // Almacena sesión activa
+    let userState = {
+      city: "Medellín",
+      maxDistance: 15,
+      priceLevel: "2",
+      userAge: 20,
+      selectedTags: ["Vista Panorámica", "Café de Origen"],
+      favorites: []
+    };
+
+    /* INICIALIZACIÓN DE LA PÁGINA */
+    window.onload = function() {
+      populateCityDropdowns();
+      renderTasteChips();
+      runMatchingEngine();
+    };
+
+    function populateCityDropdowns() {
+      const citySelect = document.getElementById('user-city');
+      let optionsHTML = '<option value="ALL">Todas las Ciudades</option>';
+      db_CIUDAD.forEach(c => {
+        const sel = c.nombre_ciudad === "Medellín" ? 'selected' : '';
+        optionsHTML += `<option value="${c.nombre_ciudad}" ${sel}>${c.nombre_ciudad}</option>`;
+      });
+      if (citySelect) citySelect.innerHTML = optionsHTML;
+    }
+
+    /* PESTAÑAS CLIENTE */
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-brand-600', 'text-white', 'shadow-sm');
+        btn.classList.add('text-slate-400', 'hover:bg-slate-800');
+      });
+
+      const activeTab = document.getElementById(`tab-${tabName}`);
+      const activeNavBtn = document.getElementById(`nav-${tabName}`);
+      
+      if (activeTab) activeTab.classList.remove('hidden');
+      if (activeNavBtn) {
+        activeNavBtn.classList.add('bg-brand-600', 'text-white', 'shadow-sm');
+        activeNavBtn.classList.remove('text-slate-400', 'hover:bg-slate-800');
+      }
+
+      if (tabName === 'radar') renderRadarView();
+      if (tabName === 'catalog') renderCatalog();
+    }
+
+    /* SISTEMA DE AUTENTICACIÓN / REGISTRO CLIENTE */
+    function openAuthModal() {
+      document.getElementById('auth-modal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+    }
+
+    function switchAuthTab(type) {
+      const loginForm = document.getElementById('form-login');
+      const registerForm = document.getElementById('form-register');
+      const loginTab = document.getElementById('tab-btn-login');
+      const regTab = document.getElementById('tab-btn-register');
+
+      if (type === 'login') {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        loginTab.className = "text-sm font-bold text-brand-400 border-b-2 border-brand-400 pb-1";
+        regTab.className = "text-sm font-bold text-slate-400 hover:text-white pb-1";
+      } else {
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+        regTab.className = "text-sm font-bold text-brand-400 border-b-2 border-brand-400 pb-1";
+        loginTab.className = "text-sm font-bold text-slate-400 hover:text-white pb-1";
+      }
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const dob = document.getElementById('reg-dob').value;
+      const gender = parseInt(document.getElementById('reg-gender').value);
+
+      const newUser = {
+        id_usuario: db_USUARIO.length + 1,
+        nombre_usuario: name,
+        id_genero: gender,
+        fecha_nacimiento: dob
+      };
+
+      db_USUARIO.push(newUser);
+      currentUser = newUser;
+      
+      // Calcular edad automáticamente
+      const birthYear = new Date(dob).getFullYear();
+      const currentYear = new Date().getFullYear();
+      userState.userAge = currentYear - birthYear;
+      document.getElementById('user-age').value = userState.userAge;
+
+      updateAuthUI();
+      closeAuthModal();
+      runMatchingEngine();
+      showToast(`¡Bienvenido/a, ${name}! Tu cuenta ha sido registrada.`, 'success');
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      currentUser = db_USUARIO[0]; // Usuario de prueba
+      updateAuthUI();
+      closeAuthModal();
+      showToast(`Suscripción iniciada como ${currentUser.nombre_usuario}`, 'success');
+    }
+
+    function updateAuthUI() {
+      const container = document.getElementById('auth-button-container');
+      if (currentUser) {
+        container.innerHTML = `
+          <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs">
+            <i class="fa-solid fa-circle-user text-brand-400 text-sm"></i>
+            <span class="font-bold text-white">${currentUser.nombre_usuario}</span>
+            <button onclick="logout()" class="text-slate-500 hover:text-rose-400 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <button onclick="openAuthModal()" class="flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-lg shadow-brand-500/20">
+            <i class="fa-solid fa-user-plus"></i> Iniciar Sesión / Registrarse
+          </button>
+        `;
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      updateAuthUI();
+      showToast('Sesión cerrada', 'info');
+    }
+
+    /* HELPERS PARA CONSULTAR RELACIONES */
+    function getCityName(id_ciudad) {
+      const c = db_CIUDAD.find(x => x.id_ciudad === id_ciudad);
+      return c ? c.nombre_ciudad : "Desconocida";
+    }
+
+    function getZoneName(id_zona) {
+      const z = db_ZONA.find(x => x.id_zona === id_zona);
+      return z ? z.nombre_zona : "Zona General";
+    }
+
+    function getPlaceType(id_lugares) {
+      const t = db_TIPO_LUGAR.find(x => x.id_lugares === id_lugares);
+      return t ? t.tipo_lugar : "Lugar de Interés";
+    }
+
+    function getPlaceTags(id_lugares) {
+      const tagIds = db_LUGAR_ETIQUETA.filter(x => x.id_lugar === id_lugares).map(x => x.id_etiqueta);
+      return db_ETIQUETA.filter(e => tagIds.includes(e.id_etiqueta)).map(e => e.nombre_etiqueta);
+    }
+
+    function getPlaceRating(id_lugares) {
+      const reviews = db_RESENA.filter(r => r.id_lugares === id_lugares);
+      if (reviews.length === 0) return 4.8;
+      const sum = reviews.reduce((acc, curr) => acc + curr.calificacion, 0);
+      return (sum / reviews.length).toFixed(1);
+    }
+
+    /* FILTROS Y CHIPS */
+    function renderTasteChips() {
+      const container = document.getElementById('taste-chips');
+      container.innerHTML = db_ETIQUETA.map(tagObj => {
+        const tag = tagObj.nombre_etiqueta;
+        const isSelected = userState.selectedTags.includes(tag);
+        return `
+          <button type="button" onclick="toggleTag('${tag}')" 
+            class="px-3 py-1.5 rounded-xl text-xs font-semibold transition border ${
+              isSelected 
+                ? 'bg-brand-500/20 border-brand-500 text-brand-300 shadow-sm' 
+                : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
+            }">
+            <i class="fa-solid ${isSelected ? 'fa-check text-brand-400' : 'fa-plus text-slate-500'} mr-1"></i> ${tag}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleTag(tag) {
+      if (userState.selectedTags.includes(tag)) {
+        userState.selectedTags = userState.selectedTags.filter(t => t !== tag);
+      } else {
+        userState.selectedTags.push(tag);
+      }
+      renderTasteChips();
+      runMatchingEngine();
+    }
+
+    function updateDistanceLabel(val) {
+      userState.maxDistance = parseFloat(val);
+      document.getElementById('distance-val').innerText = `${val} km`;
+    }
+
+    function setPriceFilter(level) {
+      userState.priceLevel = level;
+      document.querySelectorAll('.price-btn').forEach(btn => {
+        if (btn.getAttribute('data-price') === level) {
+          btn.classList.add('border-brand-500', 'text-brand-300', 'bg-brand-500/10');
+        } else {
+          btn.classList.remove('border-brand-500', 'text-brand-300', 'bg-brand-500/10');
+        }
+      });
+      runMatchingEngine();
+    }
+
+    function resetPreferences() {
+      userState.city = "Medellín";
+      userState.maxDistance = 15;
+      userState.priceLevel = "2";
+      userState.userAge = 20;
+      userState.selectedTags = ["Vista Panorámica"];
+      
+      document.getElementById('user-city').value = "Medellín";
+      document.getElementById('user-age').value = 20;
+      document.getElementById('user-distance').value = 15;
+      updateDistanceLabel(15);
+      setPriceFilter('2');
+      renderTasteChips();
+      runMatchingEngine();
+      showToast('Filtros reiniciados', 'info');
+    }
+
+    /* ALGORITMO EXPERIMACH */
+    function calculateMatchPercentage(place) {
+      let score = 0;
+      let totalWeight = 0;
+      const placeTags = getPlaceTags(place.id_lugares);
+
+      const tagWeight = 45;
+      totalWeight += tagWeight;
+      if (userState.selectedTags.length > 0) {
+        const matches = placeTags.filter(t => userState.selectedTags.includes(t)).length;
+        score += (matches / userState.selectedTags.length) * tagWeight;
+      } else {
+        score += tagWeight * 0.5;
+      }
+
+      const distanceWeight = 25;
+      totalWeight += distanceWeight;
+      if (place.distance <= userState.maxDistance) {
+        const distRatio = 1 - (place.distance / (userState.maxDistance * 1.2));
+        score += Math.max(0.2, distRatio) * distanceWeight;
+      } else {
+        score += 0.05 * distanceWeight;
+      }
+
+      const ageWeight = 15;
+      totalWeight += ageWeight;
+      if (userState.userAge >= place.edad_minima) score += ageWeight;
+
+      const priceWeight = 15;
+      totalWeight += priceWeight;
+      if (userState.priceLevel === 'ALL' || parseInt(userState.priceLevel) === place.priceLevel) {
+        score += priceWeight;
+      } else if (Math.abs(parseInt(userState.priceLevel) - place.priceLevel) === 1) {
+        score += priceWeight * 0.5;
+      }
+
+      return Math.min(99, Math.round((score / totalWeight) * 100));
+    }
+
+    function runMatchingEngine() {
+      userState.city = document.getElementById('user-city').value;
+      userState.userAge = parseInt(document.getElementById('user-age').value) || 0;
+      const sortBy = document.getElementById('sort-by').value;
+
+      let filtered = db_LUGARES.filter(p => {
+        const cityName = getCityName(p.id_ciudad);
+        return userState.city === 'ALL' || cityName === userState.city;
+      });
+
+      let scoredPlaces = filtered.map(place => ({
+        ...place,
+        cityName: getCityName(place.id_ciudad),
+        zoneName: getZoneName(place.id_zona),
+        category: getPlaceType(place.id_lugares),
+        tags: getPlaceTags(place.id_lugares),
+        rating: getPlaceRating(place.id_lugares),
+        matchPercent: calculateMatchPercentage(place)
+      }));
+
+      if (sortBy === 'match') scoredPlaces.sort((a, b) => b.matchPercent - a.matchPercent);
+      if (sortBy === 'distance') scoredPlaces.sort((a, b) => a.distance - b.distance);
+      if (sortBy === 'rating') scoredPlaces.sort((a, b) => b.rating - a.rating);
+
+      renderRecommendationsGrid(scoredPlaces);
+    }
+
+    function renderRecommendationsGrid(places) {
+      const grid = document.getElementById('recommendations-grid');
+      const countText = document.getElementById('results-count-text');
+      countText.innerText = `Encontrados ${places.length} destinos compatibles`;
+
+      if (places.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full glass-card p-12 text-center rounded-3xl">
+            <i class="fa-solid fa-compass-slash text-4xl text-slate-600 mb-3"></i>
+            <h3 class="text-lg font-bold text-white">Sin coincidencias</h3>
+            <p class="text-xs text-slate-400 mt-1">Intenta ajustar tu búsqueda o filtro de ciudad.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = places.map((place) => {
+        const isFav = userState.favorites.some(f => f.id_lugares === place.id_lugares);
+        const matchBg = place.matchPercent >= 80 ? 'bg-emerald-500 text-slate-950' : (place.matchPercent >= 60 ? 'bg-amber-400 text-slate-950' : 'bg-slate-700 text-white');
+
+        return `
+          <div class="glass-card rounded-3xl overflow-hidden hover:border-brand-500/50 transition duration-300 flex flex-col group shadow-lg">
+            <div class="relative h-48 bg-slate-900 overflow-hidden">
+              <img src="${place.image}" alt="${place.nombre_lugar}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+              
+              <div class="absolute top-3 left-3 ${matchBg} text-xs font-extrabold px-3 py-1 rounded-xl shadow-md flex items-center gap-1">
+                <i class="fa-solid fa-bolt text-[10px]"></i> ${place.matchPercent}% Match
+              </div>
+
+              <button onclick="toggleFavorite(${place.id_lugares})" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-950/70 border border-slate-700 text-slate-300 hover:text-rose-500 flex items-center justify-center transition">
+                <i class="fa-${isFav ? 'solid text-rose-500' : 'regular'} fa-heart text-xs"></i>
+              </button>
+
+              <div class="absolute bottom-3 left-3 right-3 flex justify-between items-end">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-300 bg-slate-950/80 px-2.5 py-0.5 rounded-md border border-brand-500/30 font-mono">
+                  ${place.category}
+                </span>
+                <span class="text-xs text-amber-400 font-bold bg-slate-950/80 px-2 py-0.5 rounded-md flex items-center gap-1">
+                  <i class="fa-solid fa-star text-[10px]"></i> ${place.rating}
+                </span>
+              </div>
+            </div>
+
+            <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+              <div>
+                <h3 class="font-bold text-base text-white group-hover:text-brand-300 transition line-clamp-1">${place.nombre_lugar}</h3>
+                <p class="text-xs text-slate-400 flex items-center gap-1 mt-1">
+                  <i class="fa-solid fa-location-dot text-rose-400"></i> ${place.cityName} • <strong class="text-slate-200">${place.distance} km</strong>
+                </p>
+                <p class="text-xs text-slate-300 mt-2.5 line-clamp-2 leading-relaxed">${place.descripcion}</p>
+              </div>
+
+              <div>
+                <div class="flex flex-wrap gap-1 mb-4">
+                  ${place.tags.map(t => `<span class="text-[10px] bg-slate-900 text-slate-300 border border-slate-800 px-2 py-0.5 rounded-md">${t}</span>`).join('')}
+                </div>
+
+                <button onclick="openDetailModal(${place.id_lugares})" class="w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/30 font-semibold text-xs py-2 rounded-xl transition">
+                  Ver Detalles
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* RADAR */
+    function renderRadarView() {
+      const container = document.getElementById('radar-points-container');
+      if (!container) return;
+
+      const currentCityPlaces = db_LUGARES.filter(p => userState.city === 'ALL' || getCityName(p.id_ciudad) === userState.city);
+
+      const points = currentCityPlaces.map((place, idx) => {
+        const angle = (idx * 45) * (Math.PI / 180);
+        const radiusPercent = Math.min(45, (place.distance / 25) * 45);
+        const left = 50 + radiusPercent * Math.cos(angle);
+        const top = 50 + radiusPercent * Math.sin(angle);
+
+        const match = calculateMatchPercentage(place);
+        const colorClass = match >= 80 ? 'bg-emerald-400 ring-emerald-400/30' : (match >= 50 ? 'bg-amber-400 ring-amber-400/30' : 'bg-rose-400 ring-rose-400/30');
+
+        return `
+          <div class="absolute group cursor-pointer -translate-x-1/2 -translate-y-1/2" style="left: ${left}%; top: ${top}%;" onclick="openDetailModal(${place.id_lugares})">
+            <div class="w-4 h-4 rounded-full ${colorClass} ring-4 animate-pulse"></div>
+            <div class="hidden group-hover:block absolute bottom-6 left-1/2 -translate-x-1/2 bg-slate-950 border border-slate-700 text-white text-[10px] p-2 rounded-xl whitespace-nowrap z-30 shadow-xl">
+              <strong class="block font-bold">${place.nombre_lugar}</strong>
+              <span class="text-slate-400">${place.distance} km • ${match}% Match</span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = points.join('');
+    }
+
+    /* DETALLES Y FAVORITOS */
+    function openDetailModal(id_lugares) {
+      const place = db_LUGARES.find(p => p.id_lugares === id_lugares);
+      if (!place) return;
+
+      document.getElementById('modal-img').src = place.image;
+      document.getElementById('modal-title').innerText = place.nombre_lugar;
+      document.getElementById('modal-category').innerText = getPlaceType(place.id_lugares);
+      document.getElementById('modal-location').querySelector('span').innerText = `${getCityName(place.id_ciudad)}, ${getZoneName(place.id_zona)}`;
+      document.getElementById('modal-desc').innerText = place.descripcion;
+      document.getElementById('modal-distance').innerText = `${place.distance} km`;
+      document.getElementById('modal-price').innerText = '$'.repeat(place.priceLevel);
+      document.getElementById('modal-min-age').innerText = place.edad_minima > 0 ? `${place.edad_minima}+ años` : 'Para todos';
+      document.getElementById('modal-rating').innerText = `★ ${getPlaceRating(place.id_lugares)}`;
+      document.getElementById('modal-match-badge').innerText = `${calculateMatchPercentage(place)}% Match`;
+
+      document.getElementById('modal-tags').innerHTML = getPlaceTags(place.id_lugares).map(t => `
+        <span class="text-[10px] bg-slate-800 text-brand-300 border border-slate-700 px-2.5 py-1 rounded-lg font-medium">${t}</span>
+      `).join('');
+
+      document.getElementById('modal-fav-btn').onclick = () => toggleFavorite(place.id_lugares);
+      document.getElementById('place-detail-modal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('place-detail-modal').classList.add('hidden');
+    }
+
+    function toggleFavorite(id_lugares) {
+      const place = db_LUGARES.find(p => p.id_lugares === id_lugares);
+      if (!place) return;
+
+      const existsIdx = userState.favorites.findIndex(f => f.id_lugares === id_lugares);
+      if (existsIdx > -1) {
+        userState.favorites.splice(existsIdx, 1);
+        showToast('Eliminado de tus favoritos', 'info');
+      } else {
+        userState.favorites.push(place);
+        showToast('Añadido a tus favoritos', 'success');
+      }
+
+      document.getElementById('fav-count').innerText = userState.favorites.length;
+      renderFavoritesList();
+      runMatchingEngine();
+    }
+
+    function toggleFavoritesModal() {
+      document.getElementById('favorites-modal').classList.toggle('hidden');
+      renderFavoritesList();
+    }
+
+    function renderFavoritesList() {
+      const container = document.getElementById('fav-list-container');
+      if (userState.favorites.length === 0) {
+        container.innerHTML = `<p class="text-center text-xs text-slate-500 py-8">No tienes favoritos guardados.</p>`;
+        return;
+      }
+
+      container.innerHTML = userState.favorites.map(place => `
+        <div class="flex items-center gap-3 bg-slate-900 border border-slate-800 p-3 rounded-2xl">
+          <img src="${place.image}" class="w-12 h-12 rounded-xl object-cover">
+          <div class="flex-1 min-w-0">
+            <h4 class="text-xs font-bold text-white truncate">${place.nombre_lugar}</h4>
+            <p class="text-[10px] text-slate-400">${getCityName(place.id_ciudad)}</p>
+          </div>
+          <button onclick="toggleFavorite(${place.id_lugares})" class="text-rose-400 p-1.5 hover:bg-slate-800 rounded-lg">
+            <i class="fa-solid fa-trash text-xs"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function clearAllFavorites() {
+      userState.favorites = [];
+      document.getElementById('fav-count').innerText = 0;
+      renderFavoritesList();
+      runMatchingEngine();
+    }
+
+    function renderCatalog() {
+      const search = document.getElementById('catalog-search').value.toLowerCase();
+      const grid = document.getElementById('catalog-grid');
+
+      const filtered = db_LUGARES.filter(p => p.nombre_lugar.toLowerCase().includes(search));
+
+      grid.innerHTML = filtered.map(place => `
+        <div class="glass-card rounded-2xl p-4 space-y-3">
+          <img src="${place.image}" class="w-full h-36 rounded-xl object-cover">
+          <div>
+            <h3 class="font-bold text-sm text-white">${place.nombre_lugar}</h3>
+            <p class="text-xs text-slate-400">${getCityName(place.id_ciudad)}</p>
+          </div>
+          <button onclick="openDetailModal(${place.id_lugares})" class="w-full bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs text-slate-200 py-2 rounded-xl">
+            Ver Ficha
+          </button>
+        </div>
+      `).join('');
+    }
+
+    /* CHAT CON EXPERIBOT AI */
+    async function handleAIChatSubmit(e) {
+      e.preventDefault();
+      const inputEl = document.getElementById('ai-input');
+      const query = inputEl.value.trim();
+      if (!query) return;
+
+      const historyContainer = document.getElementById('ai-chat-history');
+      historyContainer.innerHTML += `
+        <div class="flex gap-3 justify-end">
+          <div class="bg-brand-600/20 border border-brand-500/40 p-3.5 rounded-2xl max-w-xl text-xs text-brand-100">
+            ${query}
+          </div>
+        </div>
+      `;
+
+      inputEl.value = '';
+      historyContainer.scrollTop = historyContainer.scrollHeight;
+
+      setTimeout(() => {
+        historyContainer.innerHTML += `
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-xl bg-accent-500/20 text-accent-400 flex items-center justify-center text-xs flex-shrink-0">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl max-w-xl text-xs text-slate-200 leading-relaxed">
+              Basado en tus preferencias, te sugiero visitar <strong>${db_LUGARES[0].nombre_lugar}</strong> en Medellín. ¡Tiene una vista excelente y muy buenas valoraciones de nuestra comunidad!
+            </div>
+          </div>
+        `;
+        historyContainer.scrollTop = historyContainer.scrollHeight;
+      }, 600);
+    }
+
+    /* TOASTS */
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const icon = type === 'success' ? 'fa-check-circle text-emerald-400' : 'fa-info-circle text-brand-400';
+      toast.className = `glass-card pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl border border-slate-700 text-xs text-white shadow-2xl transition duration-300 transform translate-y-2`;
+      toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
