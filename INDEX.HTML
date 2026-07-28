@@ -1,415 +1,2542 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ExperiMatch - Encuentra Tu Experiencia Ideal</title>
-  <style>
-    /* --- ESTILOS GENERALES Y DISEÑO --- */
-    :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --dark: #0f172a;
-      --light: #f8fafc;
-      --gray: #64748b;
-      --admin-badge: #dc2626;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--light); color: var(--dark); padding-bottom: 50px; }
+    <title>ExperiMatch - Encuentra Tu Experiencia Ideal</title>
 
-    /* HEADER / NAVBAR */
-    header {
-      background-color: var(--dark);
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
-    .logo h1 { font-size: 1.6rem; color: #38bdf8; letter-spacing: 0.5px; }
-    .user-panel { display: flex; align-items: center; gap: 15px; }
-    .btn-login {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .btn-login:hover { background-color: var(--primary-hover); }
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/854/854878.png">
 
-    /* SECCIÓN HERO */
-    .hero {
-      text-align: center;
-      padding: 45px 20px;
-      background: linear-gradient(to right, #1e293b, #0f172a);
-      color: white;
-    }
-    .hero h2 { font-size: 2.2rem; margin-bottom: 10px; }
-    .search-bar {
-      margin-top: 20px;
-      max-width: 550px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .search-bar input {
-      width: 100%;
-      padding: 12px 20px;
-      border-radius: 25px;
-      border: none;
-      font-size: 1rem;
-      outline: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+        }
 
-    /* CONTENEDOR DE LUGARES */
-    .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-    .grid-lugares {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 25px;
-    }
+        :root{
+            --azul:#2563eb;
+            --azulOscuro:#1e3a8a;
+            --verde:#10b981;
+            --rojo:#dc2626;
+            --gris:#64748b;
+            --oscuro:#0f172a;
+            --blanco:#ffffff;
+            --fondo:#f1f5f9;
+            --card:#ffffff;
+            --sombra:0 10px 25px rgba(0,0,0,.12);
+            --radio:15px;
+        }
 
-    /* TARJETAS DE LUGARES */
-    .card {
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
-      display: flex;
-      flex-direction: column;
-    }
-    .card:hover { 
-      transform: translateY(-5px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    .card img { width: 100%; height: 180px; object-fit: cover; }
-    .card-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
-    .card-title { font-size: 1.15rem; font-weight: bold; margin-bottom: 8px; color: var(--dark); }
-    .card-tag {
-      align-self: flex-start;
-      background: #e0f2fe;
-      color: #0369a1;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-    .card-desc { font-size: 0.9rem; color: var(--gray); line-height: 1.4; }
+        body{
+            background:var(--fondo);
+            color:var(--oscuro);
+        }
 
-    /* MODAL DE REGISTRO / LOGIN */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-    .modal-content h3 { margin-bottom: 15px; }
-    .modal-content input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    .modal-content button {
-      width: 100%;
-      padding: 10px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .close-btn {
-      float: right;
-      cursor: pointer;
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
+        header{
+            width:100%;
+            background:var(--oscuro);
+            color:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:18px 50px;
+            position:sticky;
+            top:0;
+            z-index:100;
+            box-shadow:0 5px 15px rgba(0,0,0,.2);
+        }
 
-    /* BADGES Y PANEL DE ADMIN */
-    .badge-admin { background: var(--admin-badge); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
-    .badge-user { background: #10b981; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
-    .admin-panel-secret {
-      display: none;
-      background: #fef2f2;
-      border: 1px solid #fca5a5;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 8px;
-    }
-  </style>
+        .logo h1{
+            color:#38bdf8;
+            font-size:32px;
+            letter-spacing:1px;
+        }
+
+        .logo span{
+            color:white;
+        }
+
+        nav{
+            display:flex;
+            gap:20px;
+        }
+
+        nav a{
+            color:white;
+            text-decoration:none;
+            font-weight:600;
+            transition:.3s;
+        }
+
+        nav a:hover{
+            color:#38bdf8;
+        }
+
+        .acciones{
+            display:flex;
+            gap:15px;
+            align-items:center;
+        }
+
+        button{
+            cursor:pointer;
+            border:none;
+            transition:.3s;
+        }
+
+        .btn{
+            background:var(--azul);
+            color:white;
+            padding:12px 20px;
+            border-radius:10px;
+            font-weight:bold;
+        }
+
+        .btn:hover{
+            background:var(--azulOscuro);
+        }
+
+        .hero{
+            background:linear-gradient(135deg,#0f172a,#1e293b,#2563eb);
+            color:white;
+            text-align:center;
+            padding:70px 20px;
+        }
+
+        .hero h2{
+            font-size:48px;
+            margin-bottom:15px;
+        }
+
+        .hero p{
+            font-size:18px;
+            max-width:850px;
+            margin:auto;
+            opacity:.95;
+        }
+
+        .buscador{
+            width:90%;
+            max-width:650px;
+            margin:35px auto;
+        }
+
+        .buscador input{
+            width:100%;
+            padding:18px;
+            border:none;
+            border-radius:50px;
+            font-size:17px;
+            outline:none;
+            box-shadow:var(--sombra);
+        }
+
+        .container{
+            width:95%;
+            max-width:1400px;
+            margin:auto;
+            padding:30px 0;
+        }
+
+        .titulo-seccion{
+            font-size:30px;
+            margin-bottom:25px;
+            color:#1e293b;
+        }
+
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+            gap:25px;
+        }
+
+        .card{
+            background:var(--card);
+            border-radius:var(--radio);
+            overflow:hidden;
+            box-shadow:var(--sombra);
+            transition:.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-8px);
+        }
+
+        .card img{
+            width:100%;
+            height:220px;
+            object-fit:cover;
+        }
+
+        .contenido{
+            padding:20px;
+        }
+
+        .categoria{
+            display:inline-block;
+            background:#dbeafe;
+            color:#2563eb;
+            padding:6px 12px;
+            border-radius:50px;
+            font-size:12px;
+            font-weight:bold;
+            margin-bottom:10px;
+        }
+
+        .contenido h3{
+            margin-bottom:10px;
+            font-size:22px;
+        }
+
+        .contenido p{
+            color:var(--gris);
+            line-height:1.6;
+        }
+
+        .etiquetas{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-top:15px;
+        }
+
+        .tag{
+            background:#ecfeff;
+            color:#0891b2;
+            padding:6px 10px;
+            border-radius:30px;
+            font-size:12px;
+            font-weight:bold;
+        }
+
+        .footer-card{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-top:20px;
+        }
+
+        .precio{
+            color:#10b981;
+            font-weight:bold;
+        }
+
+        .rating{
+            color:#eab308;
+            font-weight:bold;
+        }
+
+        .modal{
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,.6);
+            display:none;
+            justify-content:center;
+            align-items:center;
+            z-index:1000;
+        }
+
+        .modal-content{
+            width:420px;
+            background:white;
+            border-radius:15px;
+            padding:30px;
+        }
+
+        .modal-content h2{
+            margin-bottom:20px;
+            text-align:center;
+        }
+
+        .modal-content input,
+        .modal-content select{
+            width:100%;
+            padding:12px;
+            margin-bottom:15px;
+            border:1px solid #ddd;
+            border-radius:10px;
+            font-size:15px;
+        }
+
+        .badge-admin{
+            background:#dc2626;
+            color:white;
+            padding:5px 10px;
+            border-radius:5px;
+            font-size:12px;
+        }
+
+        .badge-user{
+            background:#10b981;
+            color:white;
+            padding:5px 10px;
+            border-radius:5px;
+            font-size:12px;
+        }
+
+        #panel-admin{
+            display:none;
+            background:#fee2e2;
+            border-left:6px solid #dc2626;
+            padding:20px;
+            border-radius:10px;
+            margin:30px 0;
+        }
+
+        @media(max-width:768px){
+
+            header{
+                flex-direction:column;
+                gap:15px;
+                padding:20px;
+            }
+
+            nav{
+                flex-wrap:wrap;
+                justify-content:center;
+            }
+
+            .hero h2{
+                font-size:34px;
+            }
+
+            .grid{
+                grid-template-columns:1fr;
+            }
+
+        }
+    </style>
+
 </head>
+
 <body>
+  <!-- ================= HEADER ================= -->
 
-  <!-- HEADER CON NOMBRE ACTUALIZADO -->
-  <header>
+<header>
+
     <div class="logo">
-      <h1 id="nombre-pagina">ExperiMatch</h1>
+        <h1>Experi<span>Match</span></h1>
     </div>
-    <div class="user-panel">
-      <div id="user-info"></div>
-      <button class="btn-login" id="btn-modal" onclick="abrirModal()">Iniciar Sesión / Registro</button>
-    </div>
-  </header>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
-    <h2>Haz Match con tu próxima experiencia</h2>
-    <p>Explora destinos, gastronomía, aventura, eventos culturales y mucho más.</p>
-    <div class="search-bar">
-      <input type="text" id="buscador" placeholder="Buscar por lugar o etiqueta (ej. Aventura, Relax, Café)..." onkeyup="filtrarLugares()">
-    </div>
-  </section>
+    <nav>
 
-  <!-- PANEL SOLO VISIBLE PARA LOS 3 ADMINISTRADORES -->
-  <div class="container">
-    <div id="panel-admin" class="admin-panel-secret">
-      <h3>👑 Modo Administrador Activado</h3>
-      <p>Bienvenido/a al panel de control exclusivo de <b>ExperiMatch</b>.</p>
-    </div>
-  </div>
+        <a href="#">Inicio</a>
+        <a href="#">Explorar</a>
+        <a href="#">Categorías</a>
+        <a href="#">Ciudades</a>
+        <a href="#">Favoritos</a>
+        <a href="#">Contacto</a>
 
-  <!-- CATÁLOGO DE LUGARES -->
-  <div class="container">
-    <div class="grid-lugares" id="contenedor-lugares">
-      <!-- Generado dinámicamente -->
-    </div>
-  </div>
+    </nav>
 
-  <!-- MODAL DE AUTENTICACIÓN -->
-  <div class="modal" id="modal-auth">
+    <div class="acciones">
+
+        <div id="infoUsuario"></div>
+
+        <button class="btn" id="btnLogin" onclick="abrirModal()">
+            Iniciar Sesión
+        </button>
+
+    </div>
+
+</header>
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <h2>
+        Encuentra tu próxima experiencia con ExperiMatch
+    </h2>
+
+    <p>
+
+        Descubre restaurantes, cafeterías, parques,
+        museos, hoteles, playas, glampings,
+        centros comerciales, bares, discotecas,
+        miradores, cascadas y cientos de lugares
+        recomendados según tus gustos.
+
+    </p>
+
+    <div class="buscador">
+
+        <input
+            type="text"
+            id="busqueda"
+            placeholder="Buscar lugares, ciudades, categorías o etiquetas..."
+            onkeyup="buscarLugar()">
+
+    </div>
+
+</section>
+
+<!-- ================= PANEL ADMINISTRADOR ================= -->
+
+<div class="container">
+
+    <div id="panel-admin">
+
+        <h2>
+
+            👑 Panel del Administrador
+
+        </h2>
+
+        <br>
+
+        <p>
+
+            Bienvenido al panel exclusivo de
+            <strong>ExperiMatch</strong>.
+
+        </p>
+
+        <br>
+
+        <button class="btn">
+            Agregar Lugar
+        </button>
+
+        <button class="btn">
+            Editar Lugar
+        </button>
+
+        <button class="btn">
+            Eliminar Lugar
+        </button>
+
+        <button class="btn">
+            Administrar Usuarios
+        </button>
+
+    </div>
+
+</div>
+
+<!-- ================= CATALOGO ================= -->
+
+<div class="container">
+
+    <h2 class="titulo-seccion">
+
+        Lugares Recomendados
+
+    </h2>
+
+    <div
+        class="grid"
+        id="contenedorLugares">
+
+        <!--
+        Aquí JavaScript agregará automáticamente
+        más de 100 lugares.
+        -->
+
+    </div>
+
+</div>
+
+<!-- ================= MODAL LOGIN ================= -->
+
+<div
+    class="modal"
+    id="modal">
+
     <div class="modal-content">
-      <span class="close-btn" onclick="cerrarModal()">&times;</span>
-      <h3>Acceso / Registro</h3>
-      <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 15px;">
-        Ingresa con tu correo registrado para verificar tus permisos.
-      </p>
-      <input type="text" id="input-nombre" placeholder="Tu Nombre">
-      <input type="email" id="input-email" placeholder="correo@ejemplo.com">
-      <button onclick="autenticarUsuario()">Ingresar</button>
+
+        <h2>
+
+            Registro / Inicio de Sesión
+
+        </h2>
+
+        <input
+            type="text"
+            id="nombre"
+            placeholder="Nombre Completo">
+
+        <input
+            type="text"
+            id="cedula"
+            placeholder="Número de Cédula">
+
+        <input
+            type="date"
+            id="fechaNacimiento">
+
+        <select id="genero">
+
+            <option value="">
+                Seleccione el género
+            </option>
+
+            <option>
+                Femenino
+            </option>
+
+            <option>
+                Masculino
+            </option>
+
+            <option>
+                No Binario
+            </option>
+
+            <option>
+                Prefiero no decir
+            </option>
+
+        </select>
+
+        <input
+            type="email"
+            id="correo"
+            placeholder="Correo electrónico">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Contraseña">
+
+        <button
+            class="btn"
+            onclick="registrarUsuario()">
+
+            Registrarse
+
+        </button>
+
+        <br><br>
+
+        <button
+            class="btn"
+            onclick="iniciarSesion()">
+
+            Iniciar Sesión
+
+        </button>
+
     </div>
-  </div>
 
-  <!-- LÓGICA EN JAVASCRIPT -->
-  <script>
-    // 1. CORREOS DE LOS 3 ADMINISTRADORES
-    const CORREOS_ADMINISTRADORES = [
-      "gabrielaurbanof2609@gmail.com",
-      "ashleyvgarcia07@gmail.com",
-      "samuelramirezhenao6@gmail.com"
-    ];
+</div>
+/******************************************************
+*                EXPERI MATCH
+*          VARIABLES PRINCIPALES
+******************************************************/
 
-    // 2. BASE DE DATOS DE LUGARES CON DIVERSIDAD DE ETIQUETAS
-    const listaLugares = [
-      {
-        id: 1,
-        nombre: "Ruta de Cascadas y Rafting",
-        categoria: "Aventura",
-        descripcion: "Descenso en río de aguas rápidas y caminata ecológica hacia caídas de agua naturales.",
-        imagen: "https://images.unsplash.com/photo-1530866495561-507c9faab2ed?w=500"
-      },
-      {
-        id: 2,
-        nombre: "Bistro & Terraza Gourmet",
-        categoria: "Gastronomía",
-        descripcion: "Platos de autor con cocina de fusión internacional y coctelería artesanal.",
-        imagen: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500"
-      },
-      {
-        id: 3,
-        nombre: "Teatro & Galería de Arte",
-        categoria: "Cultura",
-        descripcion: "Exposiciones pictóricas contemporáneas y obras teatrales independientes.",
-        imagen: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=500"
-      },
-      {
-        id: 4,
-        nombre: "Rooftop 360 Lounge",
-        categoria: "Vida Nocturna",
-        descripcion: "Bar en azotea con vista panorámica, DJs en vivo y ambiente exclusivo.",
-        imagen: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500"
-      },
-      {
-        id: 5,
-        nombre: "Reserva de Bosque Nuboso",
-        categoria: "Naturaleza",
-        descripcion: "Senderismo guiado entre flora silvestre, mariposarios y avistamiento de aves.",
-        imagen: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=500"
-      },
-      {
-        id: 6,
-        nombre: "Spa & Termales del Valle",
-        categoria: "Relax",
-        descripcion: "Piscinas de agua termal natural, circuito de saunas y masajes de relajación.",
-        imagen: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500"
-      },
-      {
-        id: 7,
-        nombre: "Barista Lab & Café Specialty",
-        categoria: "Cafetería",
-        descripcion: "Catas de café de origen, repostería fina artesanal y espacio para cowork.",
-        imagen: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500"
-      },
-      {
-        id: 8,
-        nombre: "Vuelo en Parapente Real",
-        categoria: "Deporte Extremo",
-        descripcion: "Experiencia de vuelo tándem guiado sobre los valles y cordilleras principales.",
-        imagen: "https://images.unsplash.com/photo-1521651201144-634f700b36ef?w=500"
-      },
-      {
-        id: 9,
-        nombre: "Centro de Realidad Virtual VR",
-        categoria: "Tecnología",
-        descripcion: "Salas inmersivas de videojuegos, simulaciones de vuelo y experiencias multijugador.",
-        imagen: "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?w=500"
-      },
-      {
-        id: 10,
-        nombre: "Pueblito Histórico & Artesanías",
-        categoria: "Turismo Local",
-        descripcion: "Arquitectura colonial, talleres de artesanos y recuerdos hechos a mano.",
-        imagen: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500"
-      },
-      {
-        id: 11,
-        nombre: "Playa Encantada & Glamping",
-        categoria: "Alojamiento",
-        descripcion: "Hospedaje ecológico frente al mar con fogatas nocturnas y paseos en kayak.",
-        imagen: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=500"
-      },
-      {
-        id: 12,
-        nombre: "Observatorio Astronómico",
-        categoria: "Ciencia",
-        descripcion: "Noches de observación de estrellas, planetas y telescopios de alta potencia.",
-        imagen: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500"
-      },
-      {
-        id: 13,
-        nombre: "Parque Acuático Aventura",
-        categoria: "Familiar",
-        descripcion: "Toboganes gigantes, piscina de olas y atracciones para todas las edades.",
-        imagen: "https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=500"
-      },
-      {
-        id: 14,
-        nombre: "Mercado de Antigüedades",
-        categoria: "Shopping",
-        descripcion: "Coleccionables vintage, libros antiguos, discos de vinilo y curiosidades.",
-        imagen: "https://images.unsplash.com/photo-1531058020387-3be344556be6?w=500"
-      },
-      {
-        id: 15,
-        nombre: "Jardín Botánico & Orquideario",
-        categoria: "Ecoturismo",
-        descripcion: "Invernaderos con especies tropicales y senderos rodeados de naturaleza pura.",
-        imagen: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=500"
-      },
-      {
-        id: 16,
-        nombre: "Arena de Conciertos Live",
-        categoria: "Música",
-        descripcion: "Escenario principal para festivales musicales, recitales y espectáculos masivos.",
-        imagen: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500"
-      }
-    ];
+const ADMIN_EMAILS = [
+    "gabrielaurbanof2609@gmail.com",
+    "ashleyvgarcia07@gmail.com",
+    "samuelramirezhenao6@gmail.com"
+];
 
-    // 3. RENDERIZADO DE LUGARES
-    function mostrarLugares(lugares) {
-      const contenedor = document.getElementById("contenedor-lugares");
-      contenedor.innerHTML = "";
+let usuarioActual = null;
 
-      lugares.forEach(lugar => {
-        const tarjeta = document.createElement("div");
-        tarjeta.className = "card";
-        tarjeta.innerHTML = `
-          <img src="${lugar.imagen}" alt="${lugar.nombre}">
-          <div class="card-body">
-            <span class="card-tag">${lugar.categoria}</span>
-            <div class="card-title">${lugar.nombre}</div>
-            <p class="card-desc">${lugar.descripcion}</p>
-          </div>
-        `;
-        contenedor.appendChild(tarjeta);
-      });
-    }
+let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
 
-    // 4. BÚSQUEDA Y FILTRADO POR TEXTO O ETIQUETA
-    function filtrarLugares() {
-      const texto = document.getElementById("buscador").value.toLowerCase();
-      const lugaresFiltrados = listaLugares.filter(lugar => 
-        lugar.nombre.toLowerCase().includes(texto) || 
-        lugar.categoria.toLowerCase().includes(texto) ||
-        lugar.descripcion.toLowerCase().includes(texto)
-      );
-      mostrarLugares(lugaresFiltrados);
-    }
+let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
 
-    // 5. CONTROL DEL MODAL DE AUTENTICACIÓN
-    function abrirModal() { document.getElementById("modal-auth").style.display = "flex"; }
-    function cerrarModal() { document.getElementById("modal-auth").style.display = "none"; }
+const lugares = [];
 
-    // 6. VALIDACIÓN DE PERMISOS DE ADMINISTRADOR
-    function autenticarUsuario() {
-      const nombre = document.getElementById("input-nombre").value.trim();
-      const email = document.getElementById("input-email").value.trim().toLowerCase();
+/******************************************************
+ *               MODAL
+ ******************************************************/
 
-      if (!nombre || !email) {
-        alert("Por favor completa tu nombre y correo electrónico.");
+function abrirModal(){
+
+    document.getElementById("modal").style.display="flex";
+
+}
+
+function cerrarModal(){
+
+    document.getElementById("modal").style.display="none";
+
+}
+
+/******************************************************
+ *            REGISTRAR USUARIO
+ ******************************************************/
+
+function registrarUsuario(){
+
+    let nombre=document.getElementById("nombre").value.trim();
+
+    let cedula=document.getElementById("cedula").value.trim();
+
+    let fecha=document.getElementById("fechaNacimiento").value;
+
+    let genero=document.getElementById("genero").value;
+
+    let correo=document.getElementById("correo").value.trim().toLowerCase();
+
+    let password=document.getElementById("password").value;
+
+    if(
+        nombre==""||
+        cedula==""||
+        fecha==""||
+        genero==""||
+        correo==""||
+        password==""
+    ){
+
+        alert("Complete todos los campos");
+
         return;
-      }
 
-      const userInfo = document.getElementById("user-info");
-      const adminPanel = document.getElementById("panel-admin");
-      const btnModal = document.getElementById("btn-modal");
-
-      // Verificación estricta contra la lista de 3 administradores
-      const esAdmin = CORREOS_ADMINISTRADORES.includes(email);
-
-      if (esAdmin) {
-        userInfo.innerHTML = `Hola, <b>${nombre}</b> <span class="badge-admin">Admin ExperiMatch</span>`;
-        adminPanel.style.display = "block";
-      } else {
-        userInfo.innerHTML = `Hola, <b>${nombre}</b> <span class="badge-user">Usuario</span>`;
-        adminPanel.style.display = "none";
-      }
-
-      btnModal.innerText = "Cerrar Sesión";
-      btnModal.onclick = cerrarSesion;
-      cerrarModal();
     }
 
-    function cerrarSesion() {
-      document.getElementById("user-info").innerHTML = "";
-      document.getElementById("panel-admin").style.display = "none";
-      const btnModal = document.getElementById("btn-modal");
-      btnModal.innerText = "Iniciar Sesión / Registro";
-      btnModal.onclick = abrirModal;
+    let existe=usuarios.find(u=>u.correo===correo);
+
+    if(existe){
+
+        alert("Ese correo ya está registrado.");
+
+        return;
+
     }
 
-    // Cargar catálogo inicial al abrir la página
-    mostrarLugares(listaLugares);
-  </script>
-</body>
-</html>
+    let rol="usuario";
+
+    if(ADMIN_EMAILS.includes(correo)){
+
+        rol="admin";
+
+    }
+
+    let nuevoUsuario={
+
+        id:Date.now(),
+
+        nombre,
+
+        cedula,
+
+        fecha,
+
+        genero,
+
+        correo,
+
+        password,
+
+        rol
+
+    };
+
+    usuarios.push(nuevoUsuario);
+
+    localStorage.setItem("usuarios",JSON.stringify(usuarios));
+
+    alert("Registro exitoso.");
+
+    cerrarModal();
+
+}
+
+/******************************************************
+ *          INICIAR SESIÓN
+ ******************************************************/
+
+function iniciarSesion(){
+
+    let correo=document.getElementById("correo").value.trim().toLowerCase();
+
+    let password=document.getElementById("password").value;
+
+    let usuario=usuarios.find(u=>
+
+        u.correo===correo &&
+
+        u.password===password
+
+    );
+
+    if(!usuario){
+
+        alert("Correo o contraseña incorrectos.");
+
+        return;
+
+    }
+
+    usuarioActual=usuario;
+
+    mostrarUsuario();
+
+    cerrarModal();
+
+}
+
+/******************************************************
+ *         CERRAR SESIÓN
+ ******************************************************/
+
+function cerrarSesion(){
+
+    usuarioActual=null;
+
+    document.getElementById("infoUsuario").innerHTML="";
+
+    document.getElementById("panel-admin").style.display="none";
+
+    document.getElementById("btnLogin").innerHTML="Iniciar Sesión";
+
+    document.getElementById("btnLogin").onclick=abrirModal;
+
+}
+
+/******************************************************
+ *          MOSTRAR USUARIO
+ ******************************************************/
+
+function mostrarUsuario(){
+
+    let contenedor=document.getElementById("infoUsuario");
+
+    if(usuarioActual.rol=="admin"){
+
+        contenedor.innerHTML=`
+
+        <b>${usuarioActual.nombre}</b>
+
+        <span class="badge-admin">
+
+        ADMIN
+
+        </span>
+
+        `;
+
+        document.getElementById("panel-admin").style.display="block";
+
+    }
+
+    else{
+
+        contenedor.innerHTML=`
+
+        <b>${usuarioActual.nombre}</b>
+
+        <span class="badge-user">
+
+        Usuario
+
+        </span>
+
+        `;
+
+        document.getElementById("panel-admin").style.display="none";
+
+    }
+
+    document.getElementById("btnLogin").innerHTML="Cerrar Sesión";
+
+    document.getElementById("btnLogin").onclick=cerrarSesion;
+
+}
+/******************************************************
+ *          BASE DE DATOS DE LUGARES
+ ******************************************************/
+
+lugares.push(
+
+{
+    id:1,
+    nombre:"Parque Arví",
+    ciudad:"Medellín",
+    categoria:"Naturaleza",
+    etiquetas:["Bosque","Senderismo","Ecoturismo","Familia"],
+    descripcion:"Reserva natural con senderos ecológicos, picnic y recorridos guiados.",
+    imagen:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+    calificacion:4.9,
+    precio:"Gratis"
+},
+
+{
+    id:2,
+    nombre:"Guatapé",
+    ciudad:"Guatapé",
+    categoria:"Turismo",
+    etiquetas:["Embalse","Piedra del Peñol","Fotografía"],
+    descripcion:"Uno de los pueblos más coloridos de Colombia.",
+    imagen:"https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+    calificacion:4.9,
+    precio:"$"
+},
+
+{
+    id:3,
+    nombre:"Jardín Botánico",
+    ciudad:"Medellín",
+    categoria:"Naturaleza",
+    etiquetas:["Flores","Orquídeas","Familia"],
+    descripcion:"Espacio ideal para caminar y disfrutar de la naturaleza.",
+    imagen:"https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
+    calificacion:4.8,
+    precio:"Gratis"
+},
+
+{
+    id:4,
+    nombre:"Museo de Antioquia",
+    ciudad:"Medellín",
+    categoria:"Museo",
+    etiquetas:["Botero","Arte","Historia"],
+    descripcion:"Museo con obras de Fernando Botero y artistas internacionales.",
+    imagen:"https://images.unsplash.com/photo-1518998053901-5348d3961a04",
+    calificacion:4.8,
+    precio:"$$"
+},
+
+{
+    id:5,
+    nombre:"Parque Explora",
+    ciudad:"Medellín",
+    categoria:"Ciencia",
+    etiquetas:["Tecnología","Familia","Niños"],
+    descripcion:"Museo interactivo con acuario y planetario.",
+    imagen:"https://images.unsplash.com/photo-1516321497487-e288fb19713f",
+    calificacion:4.9,
+    precio:"$$"
+},
+
+{
+    id:6,
+    nombre:"Comuna 13",
+    ciudad:"Medellín",
+    categoria:"Cultura",
+    etiquetas:["Graffiti","Historia","Arte Urbano"],
+    descripcion:"Recorrido turístico lleno de cultura y transformación social.",
+    imagen:"https://images.unsplash.com/photo-1501594907352-04cda38ebc29",
+    calificacion:4.9,
+    precio:"Gratis"
+},
+
+{
+    id:7,
+    nombre:"Plaza Botero",
+    ciudad:"Medellín",
+    categoria:"Arte",
+    etiquetas:["Esculturas","Centro","Turismo"],
+    descripcion:"Plaza con esculturas monumentales de Fernando Botero.",
+    imagen:"https://images.unsplash.com/photo-1482192596544-9eb780fc7f66",
+    calificacion:4.7,
+    precio:"Gratis"
+},
+
+{
+    id:8,
+    nombre:"Parque Lleras",
+    ciudad:"Medellín",
+    categoria:"Vida Nocturna",
+    etiquetas:["Bar","Discoteca","Restaurantes"],
+    descripcion:"Zona rosa con gran variedad de bares y restaurantes.",
+    imagen:"https://images.unsplash.com/photo-1514933651103-005eec06c04b",
+    calificacion:4.6,
+    precio:"$$$"
+},
+
+{
+    id:9,
+    nombre:"Cerro Nutibara",
+    ciudad:"Medellín",
+    categoria:"Mirador",
+    etiquetas:["Vista","Pueblito Paisa"],
+    descripcion:"Uno de los mejores miradores de Medellín.",
+    imagen:"https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
+    calificacion:4.8,
+    precio:"Gratis"
+},
+
+{
+    id:10,
+    nombre:"Santa Fe de Antioquia",
+    ciudad:"Santa Fe de Antioquia",
+    categoria:"Historia",
+    etiquetas:["Colonial","Puente","Turismo"],
+    descripcion:"Municipio colonial con gran riqueza histórica.",
+    imagen:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+    calificacion:4.9,
+    precio:"$$"
+},
+
+{
+    id:11,
+    nombre:"Parque del Café",
+    ciudad:"Armenia",
+    categoria:"Diversión",
+    etiquetas:["Montañas Rusas","Familia","Café"],
+    descripcion:"Parque temático dedicado a la cultura cafetera.",
+    imagen:"https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
+    calificacion:4.9,
+    precio:"$$$"
+},
+
+{
+    id:12,
+    nombre:"Castillo San Felipe",
+    ciudad:"Cartagena",
+    categoria:"Historia",
+    etiquetas:["Fortaleza","Turismo","Museo"],
+    descripcion:"Fortaleza militar patrimonio histórico.",
+    imagen:"https://images.unsplash.com/photo-1519046904884-53103b34b206",
+    calificacion:4.9,
+    precio:"$$"
+},
+
+{
+    id:13,
+    nombre:"Ciudad Amurallada",
+    ciudad:"Cartagena",
+    categoria:"Turismo",
+    etiquetas:["Colonial","Fotografía","Historia"],
+    descripcion:"Calles coloridas y arquitectura colonial.",
+    imagen:"https://images.unsplash.com/photo-1526772662000-3f88f10405ff",
+    calificacion:5,
+    precio:"Gratis"
+},
+
+{
+    id:14,
+    nombre:"Parque Tayrona",
+    ciudad:"Santa Marta",
+    categoria:"Playa",
+    etiquetas:["Mar","Camping","Naturaleza"],
+    descripcion:"Parque nacional con playas paradisíacas.",
+    imagen:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+    calificacion:5,
+    precio:"$$"
+},
+
+{
+    id:15,
+    nombre:"Salento",
+    ciudad:"Quindío",
+    categoria:"Pueblo",
+    etiquetas:["Valle del Cocora","Naturaleza"],
+    descripcion:"Pueblo turístico famoso por sus palmas de cera.",
+    imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+    calificacion:5,
+    precio:"$$"
+}
+
+);
+{
+id:16,
+nombre:"Jardín",
+ciudad:"Antioquia",
+categoria:"Pueblo",
+etiquetas:["Turismo","Café","Naturaleza"],
+descripcion:"Hermoso pueblo patrimonio lleno de flores y arquitectura colonial.",
+imagen:"https://images.unsplash.com/photo-1516483638261-f4dbaf036963",
+calificacion:4.9,
+precio:"$$"
+},
+
+{
+id:17,
+nombre:"Jericó",
+ciudad:"Antioquia",
+categoria:"Turismo",
+etiquetas:["Historia","Religión","Naturaleza"],
+descripcion:"Pueblo patrimonial ideal para caminar y disfrutar del paisaje.",
+imagen:"https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
+calificacion:4.8,
+precio:"$"
+},
+
+{
+id:18,
+nombre:"Piedra del Peñol",
+ciudad:"Guatapé",
+categoria:"Mirador",
+etiquetas:["Escalada","Fotografía","Paisajes"],
+descripcion:"Sube más de 700 escalones y disfruta una vista espectacular.",
+imagen:"https://images.unsplash.com/photo-1472396961693-142e6e269027",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:19,
+nombre:"Parque Norte",
+ciudad:"Medellín",
+categoria:"Diversión",
+etiquetas:["Atracciones","Familia","Niños"],
+descripcion:"Parque de diversiones con montañas rusas y juegos mecánicos.",
+imagen:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+calificacion:4.7,
+precio:"$$"
+},
+
+{
+id:20,
+nombre:"Planetario",
+ciudad:"Medellín",
+categoria:"Ciencia",
+etiquetas:["Espacio","Astronomía","Educación"],
+descripcion:"Experiencia interactiva sobre el universo.",
+imagen:"https://images.unsplash.com/photo-1446776811953-b23d57bd21aa",
+calificacion:4.8,
+precio:"$$"
+},
+
+{
+id:21,
+nombre:"Centro Comercial Santafé",
+ciudad:"Medellín",
+categoria:"Compras",
+etiquetas:["Moda","Comida","Cine"],
+descripcion:"Uno de los centros comerciales más grandes del país.",
+imagen:"https://images.unsplash.com/photo-1519567241046-7f570eee3ce6",
+calificacion:4.8,
+precio:"$$$"
+},
+
+{
+id:22,
+nombre:"Oviedo",
+ciudad:"Medellín",
+categoria:"Compras",
+etiquetas:["Moda","Restaurantes"],
+descripcion:"Centro comercial tradicional del sector El Poblado.",
+imagen:"https://images.unsplash.com/photo-1481437156560-3205f6a55735",
+calificacion:4.7,
+precio:"$$"
+},
+
+{
+id:23,
+nombre:"El Tesoro",
+ciudad:"Medellín",
+categoria:"Compras",
+etiquetas:["Lujo","Cine","Moda"],
+descripcion:"Centro comercial con excelente vista de la ciudad.",
+imagen:"https://images.unsplash.com/photo-1520607162513-77705c0f0d4a",
+calificacion:4.9,
+precio:"$$$"
+},
+
+{
+id:24,
+nombre:"Coffee Tour",
+ciudad:"Jardín",
+categoria:"Café",
+etiquetas:["Experiencias","Turismo","Café"],
+descripcion:"Recorrido por fincas cafeteras tradicionales.",
+imagen:"https://images.unsplash.com/photo-1447933601403-0c6688de566e",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:25,
+nombre:"Glamping Monteverde",
+ciudad:"Guarne",
+categoria:"Glamping",
+etiquetas:["Camping","Naturaleza","Parejas"],
+descripcion:"Hospedaje de lujo rodeado de bosque.",
+imagen:"https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+calificacion:4.9,
+precio:"$$$$"
+},
+
+{
+id:26,
+nombre:"Parque de los Deseos",
+ciudad:"Medellín",
+categoria:"Parque",
+etiquetas:["Eventos","Familia"],
+descripcion:"Espacio para actividades culturales al aire libre.",
+imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+calificacion:4.6,
+precio:"Gratis"
+},
+
+{
+id:27,
+nombre:"Museo del Oro",
+ciudad:"Bogotá",
+categoria:"Museo",
+etiquetas:["Historia","Cultura"],
+descripcion:"Colección arqueológica de oro precolombino.",
+imagen:"https://images.unsplash.com/photo-1518998053901-5348d3961a04",
+calificacion:5,
+precio:"$"
+},
+
+{
+id:28,
+nombre:"Monserrate",
+ciudad:"Bogotá",
+categoria:"Mirador",
+etiquetas:["Teleférico","Vista","Religión"],
+descripcion:"El mejor mirador de Bogotá.",
+imagen:"https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:29,
+nombre:"Malecón del Río",
+ciudad:"Barranquilla",
+categoria:"Turismo",
+etiquetas:["Río","Familia"],
+descripcion:"Paseo turístico junto al río Magdalena.",
+imagen:"https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:30,
+nombre:"Playa Blanca",
+ciudad:"Barú",
+categoria:"Playa",
+etiquetas:["Arena Blanca","Mar"],
+descripcion:"Una de las playas más famosas del Caribe colombiano.",
+imagen:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:31,
+nombre:"Minca",
+ciudad:"Santa Marta",
+categoria:"Ecoturismo",
+etiquetas:["Cascadas","Montaña"],
+descripcion:"Destino ecológico rodeado de naturaleza.",
+imagen:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:32,
+nombre:"Nevado del Ruiz",
+ciudad:"Manizales",
+categoria:"Montaña",
+etiquetas:["Volcán","Senderismo"],
+descripcion:"Parque nacional con paisajes nevados.",
+imagen:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
+calificacion:5,
+precio:"$$$"
+},
+
+{
+id:33,
+nombre:"Bioparque Ukumarí",
+ciudad:"Pereira",
+categoria:"Zoo",
+etiquetas:["Animales","Familia"],
+descripcion:"Bioparque con especies de diferentes continentes.",
+imagen:"https://images.unsplash.com/photo-1474511320723-9a56873867b5",
+calificacion:4.9,
+precio:"$$"
+},
+
+{
+id:34,
+nombre:"Termales Santa Rosa",
+ciudad:"Risaralda",
+categoria:"Relax",
+etiquetas:["Termales","Naturaleza"],
+descripcion:"Aguas termales rodeadas de cascadas.",
+imagen:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+calificacion:5,
+precio:"$$$"
+},
+
+{
+id:35,
+nombre:"Parque del Chicamocha",
+ciudad:"Santander",
+categoria:"Aventura",
+etiquetas:["Teleférico","Cañón"],
+descripcion:"Uno de los parques naturales más importantes de Colombia.",
+imagen:"https://images.unsplash.com/photo-1472396961693-142e6e269027",
+calificacion:5,
+precio:"$$$"
+}
+{
+id:36,
+nombre:"Hotel Las Nubes",
+ciudad:"Guatapé",
+categoria:"Hotel",
+etiquetas:["Piscina","Spa","Parejas","Lujo"],
+descripcion:"Hotel con vista al embalse, spa y piscina climatizada.",
+imagen:"https://images.unsplash.com/photo-1566073771259-6a8506099945",
+calificacion:4.9,
+precio:"$$$$"
+},
+
+{
+id:37,
+nombre:"Café Central",
+ciudad:"Medellín",
+categoria:"Cafetería",
+etiquetas:["Café","Postres","Coworking"],
+descripcion:"Especialidad en cafés de origen colombiano y postres artesanales.",
+imagen:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
+calificacion:4.8,
+precio:"$$"
+},
+
+{
+id:38,
+nombre:"Restaurante La Parrilla",
+ciudad:"Medellín",
+categoria:"Restaurante",
+etiquetas:["Carnes","Parrilla","Familiar"],
+descripcion:"Restaurante especializado en carnes maduradas.",
+imagen:"https://images.unsplash.com/photo-1552566626-52f8b828add9",
+calificacion:4.8,
+precio:"$$$"
+},
+
+{
+id:39,
+nombre:"Mirador San Félix",
+ciudad:"Bello",
+categoria:"Mirador",
+etiquetas:["Parapente","Vista","Fotografía"],
+descripcion:"Excelente sitio para observar Medellín desde las montañas.",
+imagen:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+calificacion:4.9,
+precio:"Gratis"
+},
+
+{
+id:40,
+nombre:"Reserva Río Claro",
+ciudad:"Antioquia",
+categoria:"Ecoturismo",
+etiquetas:["Río","Cuevas","Senderismo"],
+descripcion:"Reserva natural con aguas cristalinas y cavernas.",
+imagen:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:41,
+nombre:"Centro Comercial Viva",
+ciudad:"Envigado",
+categoria:"Compras",
+etiquetas:["Moda","Cine","Comida"],
+descripcion:"Centro comercial moderno con entretenimiento.",
+imagen:"https://images.unsplash.com/photo-1519567241046-7f570eee3ce6",
+calificacion:4.7,
+precio:"$$"
+},
+
+{
+id:42,
+nombre:"Discoteca Babylon",
+ciudad:"Medellín",
+categoria:"Vida Nocturna",
+etiquetas:["DJ","Baile","Fiesta"],
+descripcion:"Discoteca con música electrónica y ambiente juvenil.",
+imagen:"https://images.unsplash.com/photo-1516450360452-9312f5e86fc7",
+calificacion:4.6,
+precio:"$$$"
+},
+
+{
+id:43,
+nombre:"Parque de las Aguas",
+ciudad:"Bello",
+categoria:"Parque Acuático",
+etiquetas:["Piscinas","Familia","Diversión"],
+descripcion:"Parque recreativo con piscinas y toboganes.",
+imagen:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+calificacion:4.8,
+precio:"$$"
+},
+
+{
+id:44,
+nombre:"Glamping Bosque Verde",
+ciudad:"La Ceja",
+categoria:"Glamping",
+etiquetas:["Naturaleza","Parejas","Fogata"],
+descripcion:"Experiencia de lujo en medio del bosque.",
+imagen:"https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+calificacion:5,
+precio:"$$$$"
+},
+
+{
+id:45,
+nombre:"Museo Moderno",
+ciudad:"Medellín",
+categoria:"Museo",
+etiquetas:["Arte","Exposiciones"],
+descripcion:"Museo con exposiciones nacionales e internacionales.",
+imagen:"https://images.unsplash.com/photo-1518998053901-5348d3961a04",
+calificacion:4.7,
+precio:"$$"
+},
+
+{
+id:46,
+nombre:"Parque Principal",
+ciudad:"Rionegro",
+categoria:"Turismo",
+etiquetas:["Iglesia","Historia","Café"],
+descripcion:"Lugar emblemático del municipio.",
+imagen:"https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
+calificacion:4.6,
+precio:"Gratis"
+},
+
+{
+id:47,
+nombre:"Cascada La Chorrera",
+ciudad:"Cundinamarca",
+categoria:"Naturaleza",
+etiquetas:["Cascada","Senderismo"],
+descripcion:"La cascada más alta de Colombia.",
+imagen:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:48,
+nombre:"Hotel Boutique Colonial",
+ciudad:"Cartagena",
+categoria:"Hotel",
+etiquetas:["Piscina","Colonial","Lujo"],
+descripcion:"Hotel boutique dentro de la ciudad amurallada.",
+imagen:"https://images.unsplash.com/photo-1566073771259-6a8506099945",
+calificacion:5,
+precio:"$$$$"
+},
+
+{
+id:49,
+nombre:"Acuario San Andrés",
+ciudad:"San Andrés",
+categoria:"Playa",
+etiquetas:["Snorkel","Mar","Islas"],
+descripcion:"Uno de los mejores lugares para hacer snorkel.",
+imagen:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:50,
+nombre:"Cerro de Monserrate",
+ciudad:"Bogotá",
+categoria:"Mirador",
+etiquetas:["Teleférico","Montaña","Religión"],
+descripcion:"Vista panorámica de toda Bogotá.",
+imagen:"https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:51,
+nombre:"Laguna de Guatavita",
+ciudad:"Cundinamarca",
+categoria:"Naturaleza",
+etiquetas:["Laguna","Leyenda","Senderismo"],
+descripcion:"Famosa por la leyenda de El Dorado.",
+imagen:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+calificacion:4.9,
+precio:"$$"
+},
+
+{
+id:52,
+nombre:"Parque Simón Bolívar",
+ciudad:"Bogotá",
+categoria:"Parque",
+etiquetas:["Lago","Familia","Conciertos"],
+descripcion:"Uno de los parques urbanos más grandes del país.",
+imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:53,
+nombre:"Centro Histórico",
+ciudad:"Popayán",
+categoria:"Historia",
+etiquetas:["Arquitectura","Colonial"],
+descripcion:"Calles blancas y patrimonio histórico.",
+imagen:"https://images.unsplash.com/photo-1526772662000-3f88f10405ff",
+calificacion:4.9,
+precio:"Gratis"
+},
+
+{
+id:54,
+nombre:"Playa El Rodadero",
+ciudad:"Santa Marta",
+categoria:"Playa",
+etiquetas:["Mar","Arena","Familia"],
+descripcion:"Una de las playas más visitadas del Caribe.",
+imagen:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:55,
+nombre:"Valle del Cocora",
+ciudad:"Salento",
+categoria:"Naturaleza",
+etiquetas:["Palmas","Senderismo","Fotografía"],
+descripcion:"Hogar de la palma de cera, árbol nacional de Colombia.",
+imagen:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
+calificacion:5,
+precio:"$$"
+}
+{
+id:56,
+nombre:"Parque Nacional Natural Los Nevados",
+ciudad:"Manizales",
+categoria:"Naturaleza",
+etiquetas:["Nevado","Senderismo","Fotografía","Montaña"],
+descripcion:"Paisajes de alta montaña con ecosistemas únicos.",
+imagen:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
+calificacion:5,
+precio:"$$$"
+},
+
+{
+id:57,
+nombre:"Bioparque Los Ocarros",
+ciudad:"Villavicencio",
+categoria:"Fauna",
+etiquetas:["Animales","Familia","Naturaleza"],
+descripcion:"Bioparque con especies representativas de la Orinoquía.",
+imagen:"https://images.unsplash.com/photo-1474511320723-9a56873867b5",
+calificacion:4.8,
+precio:"$$"
+},
+
+{
+id:58,
+nombre:"Cañón del Chicamocha",
+ciudad:"Santander",
+categoria:"Aventura",
+etiquetas:["Teleférico","Paisaje","Parque"],
+descripcion:"Impresionante cañón con múltiples actividades.",
+imagen:"https://images.unsplash.com/photo-1472396961693-142e6e269027",
+calificacion:5,
+precio:"$$$"
+},
+
+{
+id:59,
+nombre:"Parque Caldas",
+ciudad:"Manizales",
+categoria:"Parque",
+etiquetas:["Centro","Historia","Arquitectura"],
+descripcion:"Parque principal rodeado de edificios históricos.",
+imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+calificacion:4.7,
+precio:"Gratis"
+},
+
+{
+id:60,
+nombre:"Plaza de Bolívar",
+ciudad:"Bogotá",
+categoria:"Historia",
+etiquetas:["Gobierno","Catedral","Turismo"],
+descripcion:"Plaza principal de la capital colombiana.",
+imagen:"https://images.unsplash.com/photo-1526772662000-3f88f10405ff",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:61,
+nombre:"Museo del Caribe",
+ciudad:"Barranquilla",
+categoria:"Museo",
+etiquetas:["Cultura","Historia","Arte"],
+descripcion:"Museo dedicado a la historia y cultura del Caribe colombiano.",
+imagen:"https://images.unsplash.com/photo-1518998053901-5348d3961a04",
+calificacion:4.8,
+precio:"$$"
+},
+
+{
+id:62,
+nombre:"Café Montaña",
+ciudad:"Jardín",
+categoria:"Cafetería",
+etiquetas:["Café","Postres","Vista"],
+descripcion:"Café con vista panorámica y productos artesanales.",
+imagen:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
+calificacion:4.9,
+precio:"$$"
+},
+
+{
+id:63,
+nombre:"Restaurante El Mirador",
+ciudad:"Guatapé",
+categoria:"Restaurante",
+etiquetas:["Comida Típica","Vista","Familia"],
+descripcion:"Especialidad en comida antioqueña con vista al embalse.",
+imagen:"https://images.unsplash.com/photo-1552566626-52f8b828add9",
+calificacion:4.8,
+precio:"$$$"
+},
+
+{
+id:64,
+nombre:"Parque Principal",
+ciudad:"Sabaneta",
+categoria:"Turismo",
+etiquetas:["Iglesia","Gastronomía","Familia"],
+descripcion:"Lugar emblemático para compartir en familia.",
+imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+calificacion:4.7,
+precio:"Gratis"
+},
+
+{
+id:65,
+nombre:"Glamping Cielo Azul",
+ciudad:"Rionegro",
+categoria:"Glamping",
+etiquetas:["Naturaleza","Fogata","Parejas"],
+descripcion:"Glamping de lujo rodeado de bosques.",
+imagen:"https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+calificacion:5,
+precio:"$$$$"
+},
+
+{
+id:66,
+nombre:"Hotel Mirador del Lago",
+ciudad:"Guatapé",
+categoria:"Hotel",
+etiquetas:["Piscina","Spa","Embalse"],
+descripcion:"Hotel con vista privilegiada y piscina climatizada.",
+imagen:"https://images.unsplash.com/photo-1566073771259-6a8506099945",
+calificacion:4.9,
+precio:"$$$$"
+},
+
+{
+id:67,
+nombre:"Discoteca Eclipse",
+ciudad:"Medellín",
+categoria:"Vida Nocturna",
+etiquetas:["DJ","Electrónica","Bar"],
+descripcion:"Discoteca con música en vivo y eventos especiales.",
+imagen:"https://images.unsplash.com/photo-1516450360452-9312f5e86fc7",
+calificacion:4.7,
+precio:"$$$"
+},
+
+{
+id:68,
+nombre:"Parque de la Conservación",
+ciudad:"Medellín",
+categoria:"Fauna",
+etiquetas:["Animales","Naturaleza","Familia"],
+descripcion:"Espacio dedicado a la conservación de especies.",
+imagen:"https://images.unsplash.com/photo-1474511320723-9a56873867b5",
+calificacion:4.8,
+precio:"$$"
+},
+
+{
+id:69,
+nombre:"Cascada Salto del Buey",
+ciudad:"La Ceja",
+categoria:"Naturaleza",
+etiquetas:["Cascada","Senderismo","Fotografía"],
+descripcion:"Impresionante cascada rodeada de bosque.",
+imagen:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:70,
+nombre:"Centro Comercial Mayorca",
+ciudad:"Sabaneta",
+categoria:"Compras",
+etiquetas:["Moda","Comida","Cine"],
+descripcion:"Centro comercial con gran variedad de tiendas y entretenimiento.",
+imagen:"https://images.unsplash.com/photo-1519567241046-7f570eee3ce6",
+calificacion:4.8,
+precio:"$$"
+}
+{
+id:71,
+nombre:"Parque Principal",
+ciudad:"Envigado",
+categoria:"Parque",
+etiquetas:["Familia","Iglesia","Comida"],
+descripcion:"Lugar tradicional para disfrutar de la gastronomía local.",
+imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:72,
+nombre:"Museo Casa de la Memoria",
+ciudad:"Medellín",
+categoria:"Museo",
+etiquetas:["Historia","Cultura","Memoria"],
+descripcion:"Espacio dedicado a la memoria histórica de Colombia.",
+imagen:"https://images.unsplash.com/photo-1518998053901-5348d3961a04",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:73,
+nombre:"Parque Ecológico Piedras Blancas",
+ciudad:"Guarne",
+categoria:"Naturaleza",
+etiquetas:["Lago","Bosque","Senderismo"],
+descripcion:"Ideal para caminatas y actividades ecológicas.",
+imagen:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+calificacion:4.9,
+precio:"$$"
+},
+
+{
+id:74,
+nombre:"Hotel Boutique Provenza",
+ciudad:"Medellín",
+categoria:"Hotel",
+etiquetas:["Lujo","Piscina","Spa"],
+descripcion:"Hotel exclusivo en el sector Provenza.",
+imagen:"https://images.unsplash.com/photo-1566073771259-6a8506099945",
+calificacion:5,
+precio:"$$$$"
+},
+
+{
+id:75,
+nombre:"Café del Parque",
+ciudad:"Envigado",
+categoria:"Cafetería",
+etiquetas:["Café","Postres","Cowork"],
+descripcion:"Café de especialidad con ambiente tranquilo.",
+imagen:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
+calificacion:4.9,
+precio:"$$"
+},
+
+{
+id:76,
+nombre:"Restaurante Mar y Tierra",
+ciudad:"Cartagena",
+categoria:"Restaurante",
+etiquetas:["Mariscos","Carnes","Familiar"],
+descripcion:"Especialidad en mariscos frescos y cocina internacional.",
+imagen:"https://images.unsplash.com/photo-1552566626-52f8b828add9",
+calificacion:4.9,
+precio:"$$$"
+},
+
+{
+id:77,
+nombre:"Playa Spratt Bight",
+ciudad:"San Andrés",
+categoria:"Playa",
+etiquetas:["Mar","Arena Blanca","Snorkel"],
+descripcion:"La playa más famosa de San Andrés.",
+imagen:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+calificacion:5,
+precio:"Gratis"
+},
+
+{
+id:78,
+nombre:"Parque de la 93",
+ciudad:"Bogotá",
+categoria:"Parque",
+etiquetas:["Restaurantes","Eventos","Familia"],
+descripcion:"Zona gastronómica y de entretenimiento.",
+imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:79,
+nombre:"Cristo Rey",
+ciudad:"Cali",
+categoria:"Mirador",
+etiquetas:["Vista","Fotografía","Turismo"],
+descripcion:"Mirador con vista panorámica de Cali.",
+imagen:"https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
+calificacion:4.9,
+precio:"Gratis"
+},
+
+{
+id:80,
+nombre:"Zoológico de Cali",
+ciudad:"Cali",
+categoria:"Fauna",
+etiquetas:["Animales","Familia","Naturaleza"],
+descripcion:"Uno de los mejores zoológicos de Latinoamérica.",
+imagen:"https://images.unsplash.com/photo-1474511320723-9a56873867b5",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:81,
+nombre:"Parque del Perro",
+ciudad:"Cali",
+categoria:"Gastronomía",
+etiquetas:["Restaurantes","Bares","Vida Nocturna"],
+descripcion:"Zona reconocida por su oferta gastronómica.",
+imagen:"https://images.unsplash.com/photo-1514933651103-005eec06c04b",
+calificacion:4.8,
+precio:"$$"
+},
+
+{
+id:82,
+nombre:"Malecón de Bucaramanga",
+ciudad:"Bucaramanga",
+categoria:"Turismo",
+etiquetas:["Familia","Restaurantes","Vista"],
+descripcion:"Lugar ideal para caminar y disfrutar del paisaje.",
+imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+calificacion:4.7,
+precio:"Gratis"
+},
+
+{
+id:83,
+nombre:"Parque del Agua",
+ciudad:"Bucaramanga",
+categoria:"Parque",
+etiquetas:["Fuentes","Familia","Naturaleza"],
+descripcion:"Parque urbano con fuentes y jardines.",
+imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:84,
+nombre:"Glamping El Retiro",
+ciudad:"El Retiro",
+categoria:"Glamping",
+etiquetas:["Bosque","Parejas","Fogata"],
+descripcion:"Hospedaje de lujo rodeado de naturaleza.",
+imagen:"https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+calificacion:5,
+precio:"$$$$"
+},
+
+{
+id:85,
+nombre:"Hotel Campestre",
+ciudad:"Rionegro",
+categoria:"Hotel",
+etiquetas:["Piscina","Spa","Naturaleza"],
+descripcion:"Hotel ideal para descansar cerca del aeropuerto.",
+imagen:"https://images.unsplash.com/photo-1566073771259-6a8506099945",
+calificacion:4.9,
+precio:"$$$$"
+},
+
+{
+id:86,
+nombre:"Parque Principal",
+ciudad:"La Ceja",
+categoria:"Turismo",
+etiquetas:["Historia","Iglesia","Familia"],
+descripcion:"Centro histórico con arquitectura tradicional.",
+imagen:"https://images.unsplash.com/photo-1526772662000-3f88f10405ff",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:87,
+nombre:"Café de Origen",
+ciudad:"Salento",
+categoria:"Cafetería",
+etiquetas:["Café","Especialidad","Postres"],
+descripcion:"Café preparado con granos del Quindío.",
+imagen:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:88,
+nombre:"Valle del Cocora Trek",
+ciudad:"Salento",
+categoria:"Senderismo",
+etiquetas:["Naturaleza","Montaña","Fotografía"],
+descripcion:"Ruta ecológica entre las palmas de cera.",
+imagen:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:89,
+nombre:"Museo del Oro Quimbaya",
+ciudad:"Armenia",
+categoria:"Museo",
+etiquetas:["Historia","Arqueología"],
+descripcion:"Colección de piezas arqueológicas de la región.",
+imagen:"https://images.unsplash.com/photo-1518998053901-5348d3961a04",
+calificacion:4.7,
+precio:"$"
+},
+
+{
+id:90,
+nombre:"Centro Comercial Unicentro",
+ciudad:"Pereira",
+categoria:"Compras",
+etiquetas:["Moda","Comida","Cine"],
+descripcion:"Centro comercial con múltiples servicios.",
+imagen:"https://images.unsplash.com/photo-1519567241046-7f570eee3ce6",
+calificacion:4.8,
+precio:"$$"
+}
+{
+id:91,
+nombre:"Parque Los Fundadores",
+ciudad:"Pereira",
+categoria:"Parque",
+etiquetas:["Naturaleza","Familia","Centro"],
+descripcion:"Parque emblemático de Pereira ideal para descansar.",
+imagen:"https://images.unsplash.com/photo-1469474968028-56623f02e42e",
+calificacion:4.7,
+precio:"Gratis"
+},
+
+{
+id:92,
+nombre:"Playa Cristal",
+ciudad:"Santa Marta",
+categoria:"Playa",
+etiquetas:["Mar","Snorkel","Arena Blanca"],
+descripcion:"Una de las playas más cristalinas del Caribe colombiano.",
+imagen:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:93,
+nombre:"Cabo San Juan",
+ciudad:"Tayrona",
+categoria:"Playa",
+etiquetas:["Camping","Naturaleza","Mar"],
+descripcion:"Destino ideal para disfrutar del Parque Tayrona.",
+imagen:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:94,
+nombre:"Parque del Café Premium",
+ciudad:"Quindío",
+categoria:"Diversión",
+etiquetas:["Atracciones","Familia","Café"],
+descripcion:"Atracciones mecánicas y cultura cafetera.",
+imagen:"https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
+calificacion:5,
+precio:"$$$"
+},
+
+{
+id:95,
+nombre:"Hotel Isla Coral",
+ciudad:"San Andrés",
+categoria:"Hotel",
+etiquetas:["Piscina","Mar","Lujo"],
+descripcion:"Hotel cinco estrellas frente al mar.",
+imagen:"https://images.unsplash.com/photo-1566073771259-6a8506099945",
+calificacion:5,
+precio:"$$$$"
+},
+
+{
+id:96,
+nombre:"Sky Bar 360",
+ciudad:"Medellín",
+categoria:"Bar",
+etiquetas:["Rooftop","Cocteles","Vista"],
+descripcion:"Bar con vista panorámica de toda la ciudad.",
+imagen:"https://images.unsplash.com/photo-1514933651103-005eec06c04b",
+calificacion:4.9,
+precio:"$$$"
+},
+
+{
+id:97,
+nombre:"Parque Explora Nocturno",
+ciudad:"Medellín",
+categoria:"Tecnología",
+etiquetas:["Ciencia","Familia","Museo"],
+descripcion:"Experiencias nocturnas con ciencia y tecnología.",
+imagen:"https://images.unsplash.com/photo-1516321497487-e288fb19713f",
+calificacion:4.9,
+precio:"$$"
+},
+
+{
+id:98,
+nombre:"Reserva Natural El Romeral",
+ciudad:"Envigado",
+categoria:"Senderismo",
+etiquetas:["Montaña","Bosque","Naturaleza"],
+descripcion:"Reserva ecológica con múltiples senderos.",
+imagen:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+calificacion:4.8,
+precio:"Gratis"
+},
+
+{
+id:99,
+nombre:"Parque Arqueológico San Agustín",
+ciudad:"Huila",
+categoria:"Historia",
+etiquetas:["Patrimonio","Esculturas","Museo"],
+descripcion:"Sitio arqueológico declarado Patrimonio de la Humanidad.",
+imagen:"https://images.unsplash.com/photo-1526772662000-3f88f10405ff",
+calificacion:5,
+precio:"$$"
+},
+
+{
+id:100,
+nombre:"Desierto de la Tatacoa",
+ciudad:"Huila",
+categoria:"Naturaleza",
+etiquetas:["Astronomía","Desierto","Fotografía"],
+descripcion:"Paisaje desértico ideal para observar las estrellas.",
+imagen:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
+calificacion:5,
+precio:"$$"
+}
+/******************************************************
+ *            MOSTRAR LUGARES
+ ******************************************************/
+
+function mostrarLugares(lista = lugares){
+
+    const contenedor = document.getElementById("contenedorLugares");
+
+    contenedor.innerHTML = "";
+
+    lista.forEach(lugar=>{
+
+        contenedor.innerHTML += `
+
+        <div class="card">
+
+            <img src="${lugar.imagen}" alt="${lugar.nombre}">
+
+            <div class="contenido">
+
+                <span class="categoria">
+
+                    ${lugar.categoria}
+
+                </span>
+
+                <h3>${lugar.nombre}</h3>
+
+                <p>
+
+                    <b>📍 ${lugar.ciudad}</b>
+
+                </p>
+
+                <br>
+
+                <p>
+
+                    ${lugar.descripcion}
+
+                </p>
+
+                <div class="etiquetas">
+
+                    ${lugar.etiquetas.map(tag=>`
+
+                    <span class="tag">
+
+                        ${tag}
+
+                    </span>
+
+                    `).join("")}
+
+                </div>
+
+                <div class="footer-card">
+
+                    <span class="precio">
+
+                        ${lugar.precio}
+
+                    </span>
+
+                    <span class="rating">
+
+                        ⭐ ${lugar.calificacion}
+
+                    </span>
+
+                </div>
+
+                <br>
+
+                <button
+                    class="btn"
+                    onclick="agregarFavorito(${lugar.id})">
+
+                    ❤️ Agregar a Favoritos
+
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+/******************************************************
+ *            BUSCADOR
+ ******************************************************/
+
+function buscarLugar(){
+
+    const texto = document
+        .getElementById("busqueda")
+        .value
+        .toLowerCase();
+
+    const resultado = lugares.filter(lugar=>{
+
+        return(
+
+            lugar.nombre.toLowerCase().includes(texto)
+
+            ||
+
+            lugar.ciudad.toLowerCase().includes(texto)
+
+            ||
+
+            lugar.categoria.toLowerCase().includes(texto)
+
+            ||
+
+            lugar.descripcion.toLowerCase().includes(texto)
+
+            ||
+
+            lugar.etiquetas.some(tag=>
+
+                tag.toLowerCase().includes(texto)
+
+            )
+
+        );
+
+    });
+
+    mostrarLugares(resultado);
+
+}
+
+/******************************************************
+ *            FAVORITOS
+ ******************************************************/
+
+function agregarFavorito(id){
+
+    if(usuarioActual==null){
+
+        alert("Primero debes iniciar sesión.");
+
+        return;
+
+    }
+
+    if(!favoritos.includes(id)){
+
+        favoritos.push(id);
+
+        localStorage.setItem(
+
+            "favoritos",
+
+            JSON.stringify(favoritos)
+
+        );
+
+        alert("Lugar agregado a favoritos.");
+
+    }
+
+    else{
+
+        alert("Este lugar ya está en favoritos.");
+
+    }
+
+}
+
+/******************************************************
+ *            INICIO
+ ******************************************************/
+
+window.onload=function(){
+
+    mostrarLugares();
+
+}
+/******************************************************
+ * PANEL DE ADMINISTRADOR
+ ******************************************************/
+
+function esAdministrador(){
+
+    if(usuarioActual==null){
+
+        return false;
+
+    }
+
+    return ADMIN_EMAILS.includes(usuarioActual.correo);
+
+}
+
+/******************************************************
+ * AGREGAR LUGAR
+ ******************************************************/
+
+function agregarLugar(){
+
+    if(!esAdministrador()){
+
+        alert("Solo los administradores pueden agregar lugares.");
+
+        return;
+
+    }
+
+    let nombre=prompt("Nombre del lugar");
+
+    if(nombre==null) return;
+
+    let ciudad=prompt("Ciudad");
+
+    if(ciudad==null) return;
+
+    let categoria=prompt("Categoría");
+
+    if(categoria==null) return;
+
+    let descripcion=prompt("Descripción");
+
+    if(descripcion==null) return;
+
+    let imagen=prompt("URL Imagen");
+
+    if(imagen==null || imagen==""){
+
+        imagen="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee";
+
+    }
+
+    let precio=prompt("Precio");
+
+    if(precio==null) precio="Gratis";
+
+    let etiquetas=prompt("Etiquetas separadas por comas");
+
+    let nuevaCategoria=[];
+
+    if(etiquetas!=""){
+
+        nuevaCategoria=etiquetas.split(",");
+
+    }
+
+    lugares.push({
+
+        id:Date.now(),
+
+        nombre:nombre,
+
+        ciudad:ciudad,
+
+        categoria:categoria,
+
+        descripcion:descripcion,
+
+        imagen:imagen,
+
+        etiquetas:nuevaCategoria,
+
+        precio:precio,
+
+        calificacion:5
+
+    });
+
+    guardarLugares();
+
+    mostrarLugares();
+
+    alert("Lugar agregado correctamente.");
+
+}
+
+/******************************************************
+ * ELIMINAR LUGAR
+ ******************************************************/
+
+function eliminarLugar(id){
+
+    if(!esAdministrador()){
+
+        alert("No tienes permisos.");
+
+        return;
+
+    }
+
+    let confirmar=confirm("¿Eliminar este lugar?");
+
+    if(!confirmar){
+
+        return;
+
+    }
+
+    let indice=lugares.findIndex(
+
+        lugar=>lugar.id==id
+
+    );
+
+    if(indice!=-1){
+
+        lugares.splice(indice,1);
+
+    }
+
+    guardarLugares();
+
+    mostrarLugares();
+
+}
+
+/******************************************************
+ * EDITAR LUGAR
+ ******************************************************/
+
+function editarLugar(id){
+
+    if(!esAdministrador()){
+
+        alert("No autorizado.");
+
+        return;
+
+    }
+
+    let lugar=lugares.find(
+
+        x=>x.id==id
+
+    );
+
+    if(!lugar){
+
+        return;
+
+    }
+
+    lugar.nombre=prompt(
+
+        "Nombre",
+
+        lugar.nombre
+
+    );
+
+    lugar.ciudad=prompt(
+
+        "Ciudad",
+
+        lugar.ciudad
+
+    );
+
+    lugar.categoria=prompt(
+
+        "Categoría",
+
+        lugar.categoria
+
+    );
+
+    lugar.descripcion=prompt(
+
+        "Descripción",
+
+        lugar.descripcion
+
+    );
+
+    lugar.precio=prompt(
+
+        "Precio",
+
+        lugar.precio
+
+    );
+
+    guardarLugares();
+
+    mostrarLugares();
+
+    alert("Lugar actualizado.");
+
+}
+
+/******************************************************
+ * GUARDAR BASE DE DATOS
+ ******************************************************/
+
+function guardarLugares(){
+
+    localStorage.setItem(
+
+        "lugares",
+
+        JSON.stringify(lugares)
+
+    );
+
+}
+
+/******************************************************
+ * CARGAR BASE DE DATOS
+ ******************************************************/
+
+function cargarLugares(){
+
+    let datos=localStorage.getItem("lugares");
+
+    if(datos){
+
+        lugares.length=0;
+
+        JSON.parse(datos).forEach(
+
+            lugar=>lugares.push(lugar)
+
+        );
+
+    }
+
+}
+
+/******************************************************
+ * INICIAR
+ ******************************************************/
+
+cargarLugares();
+mostrarLugares();
+/******************************************************
+ *              FILTROS
+ ******************************************************/
+
+function filtrarCategoria(categoria){
+
+    if(categoria=="Todos"){
+
+        mostrarLugares(lugares);
+
+        return;
+
+    }
+
+    let resultado=lugares.filter(
+
+        lugar=>lugar.categoria==categoria
+
+    );
+
+    mostrarLugares(resultado);
+
+}
+
+function filtrarCiudad(ciudad){
+
+    if(ciudad=="Todas"){
+
+        mostrarLugares(lugares);
+
+        return;
+
+    }
+
+    let resultado=lugares.filter(
+
+        lugar=>lugar.ciudad==ciudad
+
+    );
+
+    mostrarLugares(resultado);
+
+}
+
+/******************************************************
+ *              FAVORITOS
+ ******************************************************/
+
+function verFavoritos(){
+
+    if(usuarioActual==null){
+
+        alert("Debes iniciar sesión.");
+
+        return;
+
+    }
+
+    let lista=lugares.filter(
+
+        lugar=>favoritos.includes(lugar.id)
+
+    );
+
+    mostrarLugares(lista);
+
+}
+
+/******************************************************
+ *          ESTADÍSTICAS
+ ******************************************************/
+
+function mostrarEstadisticas(){
+
+    if(!esAdministrador()){
+
+        return;
+
+    }
+
+    let categorias={};
+
+    lugares.forEach(lugar=>{
+
+        if(categorias[lugar.categoria]){
+
+            categorias[lugar.categoria]++;
+
+        }else{
+
+            categorias[lugar.categoria]=1;
+
+        }
+
+    });
+
+    console.log("=== ESTADÍSTICAS ===");
+
+    console.log("Total lugares:",lugares.length);
+
+    console.log("Usuarios:",usuarios.length);
+
+    console.log(categorias);
+
+}
+
+/******************************************************
+ *      RECOMENDACIONES
+ ******************************************************/
+
+function recomendar(){
+
+    if(usuarioActual==null){
+
+        mostrarLugares(lugares);
+
+        return;
+
+    }
+
+    let recomendados=lugares.filter(
+
+        lugar=>lugar.calificacion>=4.8
+
+    );
+
+    mostrarLugares(recomendados);
+
+}
+
+/******************************************************
+ *          BOTÓN RECOMENDADOS
+ ******************************************************/
+
+function mostrarTop10(){
+
+    let top=[...lugares];
+
+    top.sort(
+
+        (a,b)=>b.calificacion-a.calificacion
+
+    );
+
+    mostrarLugares(top.slice(0,10));
+
+}
+
+/******************************************************
+ *              RESETEAR
+ ******************************************************/
+
+function mostrarTodo(){
+
+    mostrarLugares(lugares);
+
+}
